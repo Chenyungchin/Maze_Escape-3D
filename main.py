@@ -2,6 +2,7 @@ import sys, time
 import random
 import pygame
 from pygame.locals import Color, QUIT, MOUSEBUTTONDOWN, USEREVENT, USEREVENT
+from maze_2D import build_grid, generate_maze
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
@@ -21,53 +22,35 @@ lightcoral = (240, 128, 128)
 
 pygame.init()
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+screen.fill(white)
 pygame.display.set_caption("Maze Escape-3D")
 clock = pygame.time.Clock()
 
-x = 40
-y = 30
-grid = []
 
-# build the grid
-def build_grid(width, height):
-    w = 720//width
-    x = 40
-    y = 30
-    for i in range(height):
-        for j in range(width):
-            pygame.draw.line(screen, white, (x, y), (x + w, y))
-            pygame.draw.line(screen, white, (x + w, y), (x + w, y + w))
-            pygame.draw.line(screen, white, (x + w, y + w), (x, y + w))
-            pygame.draw.line(screen, white, (x, y + w), (x, y))
-            grid.append((x,y))
-            x = x + w
-        x = 40
-        y += w
-    
-    pygame.display.update()
 
-def remove_horizontal(x, y, w):
-    pygame.draw.line(screen, black, (x, y), (x + w, y))
-    pygame.display.update()
 
-def remove_vertical(x, y, w):
-    pygame.draw.line(screen, black, (x, y), (x, y + w))
-    pygame.display.update()
 
-difficulty = "hard"
+mapsize = "12x9"
 
-if difficulty == "easy":
-    build_grid(12, 9)
+if mapsize == "12x9":
     w = 720 // 12
-elif difficulty == "normal":
-    build_grid(16, 12)
+    width = 12
+    height = 9
+elif mapsize == "16x12":
     w = 720 // 16
-elif difficulty == "hard":
-    build_grid(20, 15)
+    width = 16
+    height = 12
+elif mapsize == "20x15":
     w = 720 // 20
+    width = 20
+    height = 15
 
-# remove_horizontal(40+4*w, 30+8*w, w)
-# remove_vertical(40+3*w, 30+w, w)
+build_grid(width, height, w)
+# algorithm = "dfs_backtrack"
+algorithm = "random_kruskal"
+generate_maze(algorithm, width, height, w)
+
+
 
 run = True
 while run:
