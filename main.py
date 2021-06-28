@@ -56,6 +56,16 @@ algorithm = "dfs_backtrack"
 # algorithm = "randomized_kruskal"
 # algorithm = "randomized_prims"
 maze_matrix = generate_maze(algorithm, width, height, w)
+
+for i in range(2*height-1):
+    maze_matrix[i].insert(0, 1)
+    maze_matrix[i].append(1)
+maze_matrix.insert(0, [1]*(2*width+1))
+maze_matrix.append([1]*(2*width+1))
+#define starting point
+maze_matrix[1][0] = 0
+
+
 print(maze_matrix)
 
 
