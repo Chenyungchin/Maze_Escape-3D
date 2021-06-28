@@ -4,6 +4,7 @@ from OpenGL.GLU import *
 from src.cube import Cube
 from src.plane import Plane
 from src.texture import Texture
+from maze_2D import generate_maze
 import math
 
 # Keyboard commands.
@@ -20,7 +21,7 @@ steprot = 5
 # Size of cubes used to create wall segments.
 cubesize = 2
 # Initial camera position after map is drawn.
-camerapos = [-8.0, 0.0, -38.0]
+camerapos = [2.0, 0.0, -23.0]
 # Initial camera rotation.
 camerarot = 0.0
 
@@ -47,24 +48,30 @@ def drawScene():
         # 1 = wall
         # 0 = path
         # This could be built procedurally; hard-coded for now.
+        global camerapos
         map = [
-            [1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-            [1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1],
-            [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-            [1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1],
-            [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1],
-            [1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1],
-            [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-            [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1],
-            [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1],
-            [1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
-            [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1],
-            [1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1],
-            [1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1]
+            [0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], 
+            [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+            [0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0], 
+            [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0], 
+            [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0], 
+            [1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0], 
+            [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0], 
+            [0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1], 
+            [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0], 
+            [1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], 
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0], 
+            [0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0], 
+            [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], 
+            [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0], 
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+            [0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0], 
+            [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
         ]
+        shiftx = len(map[0])-1
+        shiftz = len(map)-1
+        # camerapos[0] += shiftx
+        # camerapos[2] += shiftz
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
@@ -82,7 +89,7 @@ def drawScene():
         # Draw floor.
         glPushMatrix()
         glTranslatef(0.0, -2.0, 0.0)
-        glScalef(30.0, 1.0, 30.0)
+        glScalef(shiftx+1, 1.0, shiftz+1)
         plane.drawplane(floortexture, 40.0)
         glPopMatrix()
 
@@ -90,12 +97,14 @@ def drawScene():
         glPushMatrix()
         glTranslatef(0.0, 2.0, 0.0)
         glRotatef(180.0, 0.0, 0.0, 1.0)
-        glScalef(30.0, 1.0, 30.0)
+        glScalef(shiftx+1, 1.0, shiftz+1)
         plane.drawplane(ceilingtexture, 50.0)
         glPopMatrix()
 
         # Build the maze like a printer; back to front, left to right.
         columncount = 0
+
+        glTranslatef(-shiftx, 0, -shiftz)
 
         for i in map:
 

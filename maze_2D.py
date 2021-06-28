@@ -68,7 +68,7 @@ def go_down(x, y, w):
     pygame.draw.rect(screen, blue_violet,(x+1, y+1, w-1, 2*w-1))
     pygame.display.update()
 
-def backtrack_coloring(x, y, w):
+def highlight_coloring(x, y, w):
     pygame.draw.rect(screen, yellow,(x+1, y+1, w-1, w-1))
     pygame.display.update()
 
@@ -77,12 +77,15 @@ def cell_recoloring(x, y, w):
     pygame.display.update()
 
 def generate_maze(algorithm, width, height, w):
+    maze_matrix = [[(i+j)%2 for j in range(2*width-1)] for i in range(2*height-1)]
     if algorithm == "dfs_backtrack":
-        dfs_backtrack(w)
-    if algorithm == "random_kruskal":
-        random_kruskal(width, height, w)
+        return dfs_backtrack(w, maze_matrix)
+    if algorithm == "randomized_kruskal":
+        return randomized_kruskal(width, height, w, maze_matrix)
+    if algorithm == "randomized_prims":
+        return randomized_prims(width, height, w, maze_matrix)
 
-def dfs_backtrack(w):
+def dfs_backtrack(w, maze_matrix):
     x = 40
     y = 30
     cell_stack = [(x, y)]
@@ -105,26 +108,39 @@ def dfs_backtrack(w):
 
             if direction == "right":
                 go_right(x, y, w)
+                col = (x-40)//w
+                row = (y-30)//w
+                maze_matrix[2*row][2*col+1] = 0
                 x += w
             elif direction == "left":
                 go_left(x, y, w)
+                col = (x-w-40)//w
+                row = (y-30)//w
+                maze_matrix[2*row][2*col+1] = 0
                 x -= w
             elif direction == "down":
                 go_down(x, y, w)
+                col = (x-40)//w
+                row = (y-30)//w
+                maze_matrix[2*row+1][2*col] = 0
                 y += w
             else:
                 go_up(x, y, w)
+                col = (x-40)//w
+                row = (y-w-30)//w
+                maze_matrix[2*row+1][2*col] = 0
                 y -= w
 
             visited.append((x, y))
             cell_stack.append((x, y))
         else:
             (x, y) = cell_stack.pop()
-            backtrack_coloring(x, y, w)
+            highlight_coloring(x, y, w)
     cell_recoloring(x, y, w)
+    return maze_matrix
 
 
-def random_kruskal(width, height, w):
+def randomized_kruskal(width, height, w, maze_matrix):
     x = 40
     y = 30
     leader, rank, edges = initialize(width, height)
@@ -142,9 +158,59 @@ def random_kruskal(width, height, w):
                 y = 30 + row*w
                 if cell2-cell1 == 1:
                     go_right(x, y, w)
+                    maze_matrix[2*row][2*col+1] = 0
                 else:
                     go_down(x, y, w)
+                    maze_matrix[2*row+1][2*col] = 0
                 break
+    return maze_matrix
+
+def randomized_prims(width, height, w, maze_matrix):
+    x = 40
+    y = 30
+    movement_list = [(x, y, "right"), (x, y, "down")]
+    visited = [(x, y)]
+    while len(movement_list) > 0:
+        movement = random.choice(movement_list)
+        x, y, direction = movement
+        movement_list.remove(movement)
+        if (x, y) in grid and (x, y) not in visited:
+            highlight_coloring(x, y, w)
+            time.sleep(0.1)
+            visited.append((x, y))
+            if direction == "right":
+                go_right(x-w, y, w)
+                col = (x-w-40)//w
+                row = (y-30)//w
+                maze_matrix[2*row][2*col+1] = 0
+            elif direction == "left":
+                go_left(x+w, y, w)
+                col = (x-40)//w
+                row = (y-30)//w
+                maze_matrix[2*row][2*col+1] = 0
+            elif direction == "down":
+                go_down(x, y-w, w)
+                col = (x-40)//w
+                row = (y-w-30)//w
+                maze_matrix[2*row+1][2*col] = 0
+            else:#up
+                col = (x-40)//w
+                row = (y-30)//w
+                maze_matrix[2*row+1][2*col] = 0
+                go_up(x, y+w, w)
+
+        if (x+w, y) in grid and (x+w, y) not in visited:
+            movement_list.append((x+w, y, "right"))
+        if (x-w, y) in grid and (x-w, y) not in visited:
+            movement_list.append((x-w, y, "left"))
+        if (x, y+w) in grid and (x, y+w) not in visited:
+            movement_list.append((x, y+w, "down"))
+        if (x, y-w) in grid and (x, y-w) not in visited:
+            movement_list.append((x, y-w, "up"))
+
+    return maze_matrix
+        
+
 
 
 

@@ -45,10 +45,18 @@ elif mapsize == "20x15":
     width = 20
     height = 15
 
+test = False
+if test:
+    w = 720 // 4
+    width = 4
+    height = 3
+
 build_grid(width, height, w)
-# algorithm = "dfs_backtrack"
-algorithm = "random_kruskal"
-generate_maze(algorithm, width, height, w)
+algorithm = "dfs_backtrack"
+# algorithm = "randomized_kruskal"
+# algorithm = "randomized_prims"
+maze_matrix = generate_maze(algorithm, width, height, w)
+print(maze_matrix)
 
 
 
