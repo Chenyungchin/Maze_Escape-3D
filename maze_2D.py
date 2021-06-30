@@ -3,6 +3,7 @@ import random
 import pygame
 from pygame.locals import Color, QUIT, MOUSEBUTTONDOWN, USEREVENT, USEREVENT
 from disjoint_set import initialize, merge, find
+import queue
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
@@ -85,14 +86,38 @@ def generate_maze(algorithm, width, height, w):
     if algorithm == "randomized_prims":
         return randomized_prims(width, height, w, maze_matrix)
 
+def maze_drawing2D(draw_step, algorithm):
+    while len(draw_step) > 0:
+        if algorithm == "dfs_backtrack":
+            delay = 0.05
+        else:
+            delay = 0.1
+        time.sleep(delay)
+        x, y, w, direction = draw_step.pop(0)
+        if direction == "highlight":
+            highlight_coloring(x, y, w)
+        elif direction == "right":
+            go_right(x, y, w)
+        elif direction == "left":
+            go_left(x, y, w)
+        elif direction == "down":
+            go_down(x, y, w)
+        elif direction == "up":
+            go_up(x, y, w)
+        elif direction == "recolor":
+            cell_recoloring(x, y, w)
+        
+
 def dfs_backtrack(w, maze_matrix):
     x = 40
     y = 30
     cell_stack = [(x, y)]
     visited = [(x, y)]
+    draw_step = []
     while len(cell_stack) > 0:
-        time.sleep(0.1)
-        cell_recoloring(x, y, w)
+        # time.sleep(0.1)
+        # cell_recoloring(x, y, w)
+        draw_step.append((x, y, w, "recolor"))
         directions = []
         if (x+w, y) in grid and (x+w, y) not in visited:
             directions.append("right")
@@ -107,25 +132,29 @@ def dfs_backtrack(w, maze_matrix):
             direction = random.choice(directions)
 
             if direction == "right":
-                go_right(x, y, w)
+                # go_right(x, y, w)
+                draw_step.append((x, y, w, "right"))
                 col = (x-40)//w
                 row = (y-30)//w
                 maze_matrix[2*row][2*col+1] = 0
                 x += w
             elif direction == "left":
-                go_left(x, y, w)
+                # go_left(x, y, w)
+                draw_step.append((x, y, w, "left"))
                 col = (x-w-40)//w
                 row = (y-30)//w
                 maze_matrix[2*row][2*col+1] = 0
                 x -= w
             elif direction == "down":
-                go_down(x, y, w)
+                # go_down(x, y, w)
+                draw_step.append((x, y, w, "down"))
                 col = (x-40)//w
                 row = (y-30)//w
                 maze_matrix[2*row+1][2*col] = 0
                 y += w
             else:
-                go_up(x, y, w)
+                # go_up(x, y, w)
+                draw_step.append((x, y, w, "up"))
                 col = (x-40)//w
                 row = (y-w-30)//w
                 maze_matrix[2*row+1][2*col] = 0
@@ -135,18 +164,21 @@ def dfs_backtrack(w, maze_matrix):
             cell_stack.append((x, y))
         else:
             (x, y) = cell_stack.pop()
-            highlight_coloring(x, y, w)
-    cell_recoloring(x, y, w)
-    return maze_matrix
+            # highlight_coloring(x, y, w)
+            draw_step.append((x, y, w, "highlight"))
+    # cell_recoloring(x, y, w)
+    draw_step.append((x, y, w, "recolor"))
+    return maze_matrix, draw_step
 
 
 def randomized_kruskal(width, height, w, maze_matrix):
     x = 40
     y = 30
     leader, rank, edges = initialize(width, height)
+    draw_step = []
     n = width*height
     for i in range(n-1):
-        time.sleep(0.2)
+        #time.sleep(0.2)
         while True:
             rand_edge = random.choice(edges)
             edges.remove(rand_edge)
@@ -157,47 +189,54 @@ def randomized_kruskal(width, height, w, maze_matrix):
                 x = 40 + col*w
                 y = 30 + row*w
                 if cell2-cell1 == 1:
-                    go_right(x, y, w)
+                    draw_step.append((x, y, w, "right"))
                     maze_matrix[2*row][2*col+1] = 0
                 else:
-                    go_down(x, y, w)
+                    draw_step.append((x, y, w, "down"))
                     maze_matrix[2*row+1][2*col] = 0
                 break
-    return maze_matrix
+    return maze_matrix, draw_step
+        
 
 def randomized_prims(width, height, w, maze_matrix):
     x = 40
     y = 30
     movement_list = [(x, y, "right"), (x, y, "down")]
     visited = [(x, y)]
+    draw_step = []
     while len(movement_list) > 0:
         movement = random.choice(movement_list)
         x, y, direction = movement
         movement_list.remove(movement)
         if (x, y) in grid and (x, y) not in visited:
-            highlight_coloring(x, y, w)
-            time.sleep(0.1)
+            # highlight_coloring(x, y, w)
+            draw_step.append((x, y, w, "highlight"))
+            # time.sleep(0.1)
             visited.append((x, y))
             if direction == "right":
-                go_right(x-w, y, w)
+                # go_right(x-w, y, w)
+                draw_step.append((x-w, y, w, "right"))
                 col = (x-w-40)//w
                 row = (y-30)//w
                 maze_matrix[2*row][2*col+1] = 0
             elif direction == "left":
-                go_left(x+w, y, w)
+                # go_left(x+w, y, w)
+                draw_step.append((x+w, y, w, "left"))
                 col = (x-40)//w
                 row = (y-30)//w
                 maze_matrix[2*row][2*col+1] = 0
             elif direction == "down":
-                go_down(x, y-w, w)
+                # go_down(x, y-w, w)
+                draw_step.append((x, y-w, w, "down"))
                 col = (x-40)//w
                 row = (y-w-30)//w
                 maze_matrix[2*row+1][2*col] = 0
             else:#up
+                draw_step.append((x, y+w, w, "up"))
                 col = (x-40)//w
                 row = (y-30)//w
                 maze_matrix[2*row+1][2*col] = 0
-                go_up(x, y+w, w)
+                # go_up(x, y+w, w)
 
         if (x+w, y) in grid and (x+w, y) not in visited:
             movement_list.append((x+w, y, "right"))
@@ -208,9 +247,51 @@ def randomized_prims(width, height, w, maze_matrix):
         if (x, y-w) in grid and (x, y-w) not in visited:
             movement_list.append((x, y-w, "up"))
 
-    return maze_matrix
+    return maze_matrix, draw_step
+        
+def shortest_path_bfs(maze_matrix, start, end, maze_width, maze_height):
+    Q = queue.Queue()
+    Q.put(start)
+    print(Q.qsize())
+    visit = [start]
+    ancestor = [[0 for j in range(maze_width)] for i in range(maze_height)]
+    while end not in visit:
+        x, y = Q.get()
+        print(x, y, Q.qsize())
+        if x+1 <= maze_width-1 and maze_matrix[y][x+1] == 0 and (x+1, y) not in visit:
+            Q.put((x+1, y))
+            visit.append((x+1, y))
+            ancestor[y][x+1] = (x, y)
+        if x-1 >= 0 and maze_matrix[y][x-1] == 0 and (x-1, y) not in visit:
+            Q.put((x-1, y))
+            visit.append((x-1, y))
+            ancestor[y][x-1] = (x, y)
+        if y+1 <= maze_height-1 and maze_matrix[y+1][x] == 0 and (x, y+1) not in visit:
+            Q.put((x, y+1))
+            visit.append((x, y+1))
+            ancestor[y+1][x] = (x, y)
+        if y-1 >= 0 and maze_matrix[y-1][x] == 0 and (x, y-1) not in visit:
+            Q.put((x, y-1))
+            visit.append((x, y-1))
+            ancestor[y-1][x] = (x, y)
+    
+    path = [end]
+    location = end
+    while True:
+        location = ancestor[location[1]][location[0]]
+        path.insert(0, location)
+        if location == start:
+            break
+    return path
+
+
         
 
 
 
 
+if __name__ == "__main__":
+    maze = [[1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 1, 0, 0, 0, 0, 0, 1], [1, 0, 0, 1, 0, 1, 0, 0, 1], [1, 0, 0, 0, 0, 0, 1, 0, 1], [1, 1, 0, 1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1, 0, 1]]
+    print(maze)
+    dao = shortest_path_bfs(maze, (0, 1), (7, 6), 9, 7)
+    print(dao)

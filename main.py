@@ -2,7 +2,7 @@ import sys, time
 import random
 import pygame
 from pygame.locals import Color, QUIT, MOUSEBUTTONDOWN, USEREVENT, USEREVENT
-from maze_2D import build_grid, generate_maze
+from maze_2D import build_grid, generate_maze, shortest_path_bfs, maze_drawing2D
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
@@ -55,7 +55,7 @@ build_grid(width, height, w)
 algorithm = "dfs_backtrack"
 # algorithm = "randomized_kruskal"
 # algorithm = "randomized_prims"
-maze_matrix = generate_maze(algorithm, width, height, w)
+maze_matrix, draw_step = generate_maze(algorithm, width, height, w)
 
 for i in range(2*height-1):
     maze_matrix[i].insert(0, 1)
@@ -64,9 +64,17 @@ maze_matrix.insert(0, [1]*(2*width+1))
 maze_matrix.append([1]*(2*width+1))
 #define starting point
 maze_matrix[1][0] = 0
+maze_matrix[-1][-2] = 0
 
 
 print(maze_matrix)
+print(draw_step)
+
+maze_drawing2D(draw_step, algorithm)
+
+
+
+# path = shortest_path_bfs(maze_matrix, enemy_location, player_location, maze_width, maze_height)
 
 
 
