@@ -89,12 +89,12 @@ class OBJ:
         if self.generate_on_init:
             self.generate()
 
-    def generate(self, scale_rate = 0.5, rx=90, rz=90, mx=0.1, mz=0.1):
+    def generate(self, scale_rate = 0.5, rx=90, rz=90, mx=0.1, mz=0.1, my=0.5):
         self.gl_list = glGenLists(1)
         glNewList(self.gl_list, GL_COMPILE)
         glEnable(GL_TEXTURE_2D)
         glFrontFace(GL_CCW)
-        glTranslatef(-mx, 0, -mz)
+        glTranslatef(-mx, -my, -mz)
         glScalef(scale_rate, scale_rate, scale_rate)
         glRotatef(rx, 1, 0, 0)
         glRotatef(rz, 0, 0, 1)
@@ -121,7 +121,7 @@ class OBJ:
         glScalef(1/scale_rate, 1/scale_rate, 1/scale_rate)
         glRotatef(-rz, 0, 0, 1)
         glRotatef(-rx, 1, 0, 0)
-        glTranslatef(mx, 0, mz)
+        glTranslatef(mx, my, mz)
         glEndList()
 
     def render(self):
