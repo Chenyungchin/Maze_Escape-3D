@@ -3,6 +3,7 @@ import random
 import pygame
 from pygame.locals import Color, QUIT, MOUSEBUTTONDOWN, USEREVENT, USEREVENT
 from maze_2D import build_grid, generate_maze
+import maze_3D
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
@@ -58,6 +59,8 @@ algorithm = "dfs_backtrack"
 maze_matrix = generate_maze(algorithm, width, height, w)
 print(maze_matrix)
 
+
+maze_3D.main(map=maze_matrix, display=(WINDOW_WIDTH, WINDOW_HEIGHT))
 
 
 run = True

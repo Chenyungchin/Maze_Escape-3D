@@ -1,11 +1,13 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
+from pygame.constants import DOUBLEBUF, OPENGL
 from src.cube import Cube
 from src.plane import Plane
 from src.texture import Texture
 from maze_2D import generate_maze
 import math
+import pygame as pg
 
 # Keyboard commands.
 KEY_ESCAPE = b'\x1b'
@@ -75,7 +77,7 @@ def drawScene():
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-        glLoadIdentity()
+        # glLoadIdentity()
 
         cube = Cube()
         plane = Plane()
@@ -83,28 +85,28 @@ def drawScene():
         # Set up the current maze view.
         # Reset position to zero, rotate around y-axis, restore position.
         glTranslatef(0.0, 0.0, 0.0)
-        glRotatef(camerarot, 0.0, 1.0, 0.0)
-        glTranslatef(camerapos[0], camerapos[1], camerapos[2])
+        # glRotatef(camerarot, 0.0, 1.0, 0.0)
+        # glTranslatef(camerapos[0], camerapos[1], camerapos[2])
 
         # Draw floor.
-        glPushMatrix()
+        # glPushMatrix()
         glTranslatef(0.0, -2.0, 0.0)
         glScalef(shiftx+1, 1.0, shiftz+1)
         plane.drawplane(floortexture, 40.0)
-        glPopMatrix()
+        # glPopMatrix()
 
         # Draw ceiling.
-        glPushMatrix()
-        glTranslatef(0.0, 2.0, 0.0)
-        glRotatef(180.0, 0.0, 0.0, 1.0)
-        glScalef(shiftx+1, 1.0, shiftz+1)
+        # glPushMatrix()
+        # glTranslatef(0.0, 2.0, 0.0)
+        # glRotatef(180.0, 0.0, 0.0, 1.0)
+        # glScalef(shiftx+1, 1.0, shiftz+1)
         plane.drawplane(ceilingtexture, 50.0)
-        glPopMatrix()
+        # glPopMatrix()
 
         # Build the maze like a printer; back to front, left to right.
         columncount = 0
 
-        glTranslatef(-shiftx, 0, -shiftz)
+        # glTranslatef(-shiftx, 0, -shiftz)
 
         for i in map:
 
@@ -125,7 +127,7 @@ def drawScene():
             # Reset the column count; this is a new row.
             columncount = 0
 
-        glutSwapBuffers()
+        # glutSwapBuffers()
 
 def handleKeypress(*args):
 
@@ -167,28 +169,44 @@ def handleKeypress(*args):
 
 def main():
 
-        global window, ceilingtexture, floortexture, walltexture
+    global window, ceilingtexture, floortexture, walltexture
+    initGL(640, 480)
+    # glutInit(sys.argv)
+    # glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
+    # glutInitWindowSize(640, 480)
+    # glutInitWindowPosition(200, 200)
+    pg.init()
+    display = (640, 480)
+    pg.display.set_mode(display, DOUBLEBUF|OPENGL)
 
-        glutInit(sys.argv)
-        glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
-        glutInitWindowSize(640, 480)
-        glutInitWindowPosition(200, 200)
+    # window = glutCreateWindow('Experimental Maze')
 
-        window = glutCreateWindow('Experimental Maze')
-
-        # Load texture.
-        texture = Texture()
-        ceilingtexture = texture.loadImage('tex/ceiling.bmp')
-        floortexture = texture.loadImage('tex/floor.bmp')
-        walltexture = texture.loadImage('tex/wall.bmp')
-
-        glutKeyboardFunc(handleKeypress)
-
-        glutDisplayFunc(drawScene)
-        glutIdleFunc(drawScene)
-        initGL(640, 480)
-        glutMainLoop()
+    # Load texture.
+    texture = Texture()
+    ceilingtexture = texture.loadImage('tex/ceiling.bmp')
+    floortexture = texture.loadImage('tex/floor.bmp')
+    walltexture = texture.loadImage('tex/wall.bmp')
+    cube = Cube()
+    # plane = Plane()
+    glTranslatef(0.0, 0.0, -5.0)
+    while True:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+                quit()
+        # glutKeyboardFunc(handleKeypress)
+        # glutDisplayFunc(drawScene)
+        # glutIdleFunc(drawScene)
+        # drawScene()
+        # plane.drawplane(floortexture, 40.0)
+        # glRotatef(1, 1, 1, 1)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        cube.drawcube(walltexture, 1.0)
+        pg.display.flip()
+        pg.time.wait(10)
+        # initGL(640, 480)
+        # glutMainLoop()
 
 if __name__ == "__main__":
 
-        main()
+    main()
