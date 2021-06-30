@@ -24,14 +24,14 @@ yellow = (255,255,0)
 
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
-# x = 40
-# y = 30
+bias_x = 24
+bias_y = 18
 grid = []
 
 # build the grid
 def build_grid(width, height, w):
-    x = 40
-    y = 30
+    x = bias_x
+    y = bias_y
     for i in range(height):
         for j in range(width):
             pygame.draw.line(screen, black, (x, y), (x + w, y))
@@ -40,7 +40,7 @@ def build_grid(width, height, w):
             pygame.draw.line(screen, black, (x, y + w), (x, y))
             grid.append((x,y))
             x = x + w
-        x = 40
+        x = bias_x
         y += w
     
     pygame.display.update()
@@ -92,6 +92,9 @@ def maze_drawing2D(draw_step, algorithm):
             delay = 0.05
         else:
             delay = 0.1
+        test = False
+        if test:
+            delay = 0.0001
         time.sleep(delay)
         x, y, w, direction = draw_step.pop(0)
         if direction == "highlight":
@@ -109,8 +112,8 @@ def maze_drawing2D(draw_step, algorithm):
         
 
 def dfs_backtrack(w, maze_matrix):
-    x = 40
-    y = 30
+    x = bias_x
+    y = bias_y
     cell_stack = [(x, y)]
     visited = [(x, y)]
     draw_step = []
@@ -134,29 +137,29 @@ def dfs_backtrack(w, maze_matrix):
             if direction == "right":
                 # go_right(x, y, w)
                 draw_step.append((x, y, w, "right"))
-                col = (x-40)//w
-                row = (y-30)//w
+                col = (x-bias_x)//w
+                row = (y-bias_y)//w
                 maze_matrix[2*row][2*col+1] = 0
                 x += w
             elif direction == "left":
                 # go_left(x, y, w)
                 draw_step.append((x, y, w, "left"))
-                col = (x-w-40)//w
-                row = (y-30)//w
+                col = (x-w-bias_x)//w
+                row = (y-bias_y)//w
                 maze_matrix[2*row][2*col+1] = 0
                 x -= w
             elif direction == "down":
                 # go_down(x, y, w)
                 draw_step.append((x, y, w, "down"))
-                col = (x-40)//w
-                row = (y-30)//w
+                col = (x-bias_x)//w
+                row = (y-bias_y)//w
                 maze_matrix[2*row+1][2*col] = 0
                 y += w
             else:
                 # go_up(x, y, w)
                 draw_step.append((x, y, w, "up"))
-                col = (x-40)//w
-                row = (y-w-30)//w
+                col = (x-bias_x)//w
+                row = (y-w-bias_y)//w
                 maze_matrix[2*row+1][2*col] = 0
                 y -= w
 
@@ -172,8 +175,8 @@ def dfs_backtrack(w, maze_matrix):
 
 
 def randomized_kruskal(width, height, w, maze_matrix):
-    x = 40
-    y = 30
+    x = bias_x
+    y = bias_y
     leader, rank, edges = initialize(width, height)
     draw_step = []
     n = width*height
@@ -186,8 +189,8 @@ def randomized_kruskal(width, height, w, maze_matrix):
             if merge(cell1, cell2, leader, rank):
                 row = cell1//width
                 col = cell1%width
-                x = 40 + col*w
-                y = 30 + row*w
+                x = bias_x + col*w
+                y = bias_y + row*w
                 if cell2-cell1 == 1:
                     draw_step.append((x, y, w, "right"))
                     maze_matrix[2*row][2*col+1] = 0
@@ -199,8 +202,8 @@ def randomized_kruskal(width, height, w, maze_matrix):
         
 
 def randomized_prims(width, height, w, maze_matrix):
-    x = 40
-    y = 30
+    x = bias_x
+    y = bias_y
     movement_list = [(x, y, "right"), (x, y, "down")]
     visited = [(x, y)]
     draw_step = []
@@ -216,25 +219,25 @@ def randomized_prims(width, height, w, maze_matrix):
             if direction == "right":
                 # go_right(x-w, y, w)
                 draw_step.append((x-w, y, w, "right"))
-                col = (x-w-40)//w
-                row = (y-30)//w
+                col = (x-w-bias_x)//w
+                row = (y-bias_y)//w
                 maze_matrix[2*row][2*col+1] = 0
             elif direction == "left":
                 # go_left(x+w, y, w)
                 draw_step.append((x+w, y, w, "left"))
-                col = (x-40)//w
-                row = (y-30)//w
+                col = (x-bias_x)//w
+                row = (y-bias_y)//w
                 maze_matrix[2*row][2*col+1] = 0
             elif direction == "down":
                 # go_down(x, y-w, w)
                 draw_step.append((x, y-w, w, "down"))
-                col = (x-40)//w
-                row = (y-w-30)//w
+                col = (x-bias_x)//w
+                row = (y-w-bias_y)//w
                 maze_matrix[2*row+1][2*col] = 0
             else:#up
                 draw_step.append((x, y+w, w, "up"))
-                col = (x-40)//w
-                row = (y-30)//w
+                col = (x-bias_x)//w
+                row = (y-bias_y)//w
                 maze_matrix[2*row+1][2*col] = 0
                 # go_up(x, y+w, w)
 
