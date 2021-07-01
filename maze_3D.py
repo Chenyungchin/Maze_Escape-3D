@@ -142,6 +142,7 @@ def main(map, display):
     while True:
         if game_over(x, z, bx, bz):
             print("game over idiot")
+            return True
         for event in pg.event.get():
             vx, vz, step, theta, dtheta, theta_step = handel_key(
                 event, vx, vz, step, theta, dtheta, theta_step)

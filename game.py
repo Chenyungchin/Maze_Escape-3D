@@ -246,7 +246,7 @@ class Game(object):
                 else:
                     # screen.fill(CYAN)
                     # self.display_message(screen,["3D map is coming!"])
-                    maze_3D.main(map=self.maze_matrix, display=(SCREEN_WIDTH, SCREEN_HEIGHT))
+                    self.game_over = maze_3D.main(map=self.maze_matrix, display=(SCREEN_WIDTH, SCREEN_HEIGHT))
 
 
 
