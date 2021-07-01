@@ -29,7 +29,7 @@ def wireCube(map):
                 vertice[2]+=k*2
     glEnd()
 
-def solidCube(map, texture_id):
+def solidCube(map, texture_id=None):
     if texture_id is not None:
         glEnable(GL_TEXTURE_2D)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
@@ -78,6 +78,16 @@ def collision_detect(map, x, z):
     if round((x+bias)/2) >= 0 and round((z+bias)/2) >= 0:
         if map[round((x+bias)/2)][round((z+bias)/2)] == 1:
             return True
+
+def game_over(x, z, bx, bz):
+    # print("pos", (x, z), (bx, bz))
+    if (x-bx)**2 + (z-bz)**2 < 0.5:
+        return True
+    else:
+        return False
+
+def calculate_pos(x, z):
+    print("("+str(round(x/2))+","+str(round(z/2))+")")
     
 
 def main(map, display):
@@ -114,11 +124,12 @@ def main(map, display):
     dtheta = 0
     theta_step = 5
     step = 0.5
-    # print("in loop")
     # texture = Texture()
     # wall_texture = texture.loadImage("tex/wall2.bmp")
     # pacman = texture.loadImage("tex/pacman.bmp")
     while True:
+        if game_over(x, z, -bx, -bz):
+            print("game over idiot")
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
@@ -153,11 +164,23 @@ def main(map, display):
                 elif event.key == pg.K_LEFT:
                     # vx -= step
                     dtheta += theta_step
+                        
         x += vx
         z += vz
         bx -= vx
         bz -= vz
         theta += dtheta
+        if dtheta != 0:
+            if vx != 0:
+                vx /= math.sin(math.pi/180*(theta-dtheta))
+                vx *= math.sin(math.pi/180*theta)
+            elif vz != 0:
+                vx -= step*math.sin(math.pi/180*theta)
+            if vz != 0:
+                vz /= math.cos(math.pi/180*(theta-dtheta))
+                vz *= math.cos(math.pi/180*theta)
+            elif vx != 0:
+                vz += step*math.cos(math.pi/180*theta)
         if vx != 0 or vz != 0:
             if collision_detect(map, x, z):
                 x -= vx
@@ -166,14 +189,16 @@ def main(map, display):
                 print(theta, vx, vz)
                 glTranslatef(vx, 0.0, vz)
             if collision_detect(map, -bx, -bz):
-                print("collide")
+                # print("collide")
                 bx += vx
                 bz += vz
         if dtheta != 0:
             glTranslatef(-x, 0.0, -z)
             glRotatef(dtheta, 0, 1, 0)
             glTranslatef(x, 0.0, z)
-            print(theta)
+            # print(theta)
+        # calculate_pos(-bx, -bz)
+        print(theta, vx, vz)
         # glRotatef(1, 1, 1, 1)
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
         
@@ -181,7 +206,7 @@ def main(map, display):
         # glColor3f(0.0, 0.9, 0.0)
         obj.render()
         # draw_ball(x=bx, y=-0.7, z=bz, r=0.3)
-        # solidCube(map, texture_id=wall_texture)
-        wireCube(map)
+        solidCube(map)
+        # wireCube(map)
         pg.display.flip()
         # pg.time.wait(10)
