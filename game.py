@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pygame
-from maze_2D import build_grid, generate_maze, shortest_path_bfs, maze_drawing2D
+import pygame, time
+from maze_2D import build_grid, generate_maze, shortest_path_bfs, maze_drawing2D, remove_horizontal, remove_vertical, highlight_coloring
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 576
 
@@ -27,46 +27,17 @@ class Game(object):
         self.maze2D = False
         self.maze3D = False
         self.maze_matrix = []
+        self.width = 0
+        self.height = 0
+        self.show_result = False
+        self.display_result = False
         # Create the font for displaying the score on the screen
         self.font = pygame.font.Font(None,35)
         self.font_small = pygame.font.Font(None, 20)
         # Create the menu of the game
         self.menu = Menu(("Start","Setting","Guide","Exit"),font_color = WHITE,font_size=50)
         self.set = Setting(("DFS","Kruskal","Prim's","Small","Normal","Big","Setting","Algorothm  : ","Size of Maze  : "),font_color = WHITE,font_size=35)
-##        # Create the player
-##        self.player = Player(32,128,"player.png")
-##        # Create the blocks that will set the paths where the player can go
-##        self.horizontal_blocks = pygame.sprite.Group()
-##        self.vertical_blocks = pygame.sprite.Group()
-##        # Create a group for the dots on the screen
-##        self.dots_group = pygame.sprite.Group()
-##        # Set the enviroment:
-##        for i,row in enumerate(enviroment()):
-##            for j,item in enumerate(row):
-##                if item == 1:
-##                    self.horizontal_blocks.add(Block(j*32+8,i*32+8,BLACK,16,16))
-##                elif item == 2:
-##                    self.vertical_blocks.add(Block(j*32+8,i*32+8,BLACK,16,16))
-##        # Create the enemies
-##        self.enemies = pygame.sprite.Group()
-##        self.enemies.add(Slime(288,96,0,2))
-##        self.enemies.add(Slime(288,320,0,-2))
-##        self.enemies.add(Slime(544,128,0,2))
-##        self.enemies.add(Slime(32,224,0,2))
-##        self.enemies.add(Slime(160,64,2,0))
-##        self.enemies.add(Slime(448,64,-2,0))
-##        self.enemies.add(Slime(640,448,2,0))
-##        self.enemies.add(Slime(448,320,2,0))
-##        # Add the dots inside the game
-##        for i, row in enumerate(enviroment()):
-##            for j, item in enumerate(row):
-##                if item != 0:
-##                    self.dots_group.add(Ellipse(j*32+12,i*32+12,WHITE,8,8))
-##
-##        # Load the sound effects
-##        self.pacman_sound = pygame.mixer.Sound("pacman_sound.ogg")
-##        self.game_over_sound = pygame.mixer.Sound("game_over_sound.ogg")
-##
+
 
     def process_events(self):
         for event in pygame.event.get(): # User did something
@@ -85,6 +56,13 @@ class Game(object):
                             self.chosenalgorithm,self.chosensize = self.set.chosen[0],self.set.chosen[1]-3
                             self.game_over = False
                             self.maze2D = True
+                            
+                            self.maze3D = False
+                            self.maze_matrix = []
+                            self.width = 0
+                            self.height = 0
+                            self.show_result = False
+                            self.display_result = False
                             self.draw_maze = True
                             
                         elif self.menu.state == 1:
@@ -100,58 +78,15 @@ class Game(object):
                             return True
                     elif not self.maze2D and not self.maze3D:
                         self.maze3D = True
-                    #elif self.setting:
-                        
-##                elif event.key == pygame.K_RIGHT:
-##                    self.player.move_right()
-##
-##                elif event.key == pygame.K_LEFT:
-##                    self.player.move_left()
-##
-##                elif event.key == pygame.K_UP:
-##                    self.player.move_up()
-##
-##                elif event.key == pygame.K_DOWN:
-##                    self.player.move_down()
-##                
+           
                 elif event.key == pygame.K_ESCAPE:
                     self.game_over = True
                     self.maze3D = False
                     self.about = False
-                    self.setting = False
-
-##            elif event.type == pygame.KEYUP:
-##                if event.key == pygame.K_RIGHT:
-##                    self.player.stop_move_right()
-##                elif event.key == pygame.K_LEFT:
-##                    self.player.stop_move_left()
-##                elif event.key == pygame.K_UP:
-##                    self.player.stop_move_up()
-##                elif event.key == pygame.K_DOWN:
-##                    self.player.stop_move_down()
-##
-##            elif event.type == pygame.MOUSEBUTTONDOWN:
-##                self.player.explosion = True
-##                    
+                    self.setting = False                
         return False
-    
-##    def run_logic(self):
-##        if not self.game_over:
-##            self.player.update(self.horizontal_blocks,self.vertical_blocks)
-##            block_hit_list = pygame.sprite.spritecollide(self.player,self.dots_group,True)
-##            # When the block_hit_list contains one sprite that means that player hit a dot
-##            if len(block_hit_list) > 0:
-##                # Here will be the sound effect
-##                self.pacman_sound.play()
-##                self.score += 1
-##            block_hit_list = pygame.sprite.spritecollide(self.player,self.enemies,True)
-##            if len(block_hit_list) > 0:
-##                self.player.explosion = True
-##                self.game_over_sound.play()
-##            self.game_over = self.player.game_over
-##            self.enemies.update(self.horizontal_blocks,self.vertical_blocks)
-##           # tkMessageBox.showinfo("GAME OVER!","Final Score = "+(str)(GAME.score))    
-##
+     
+
     
     def display_frame(self,screen):
         # First, clear the screen to white. Don't put other drawing commands
@@ -170,13 +105,8 @@ class Game(object):
                 self.display_message(screen,["Select the maze-generating algorithm and map size in Setting.", "Press LEFT and RIGHT on your keyboard to adjust your vision", "and press UP to proceed,","Find the Way to escape from the MAZE!","Enjoy the 3D world!"])
                 label = self.font.render("Press ESC to return",True, WHITE)
                 screen.blit(label, (700, 520))
-                #print(bool(self.setting))
-                #self.display_message(screen,"QAQ",2)
-                #"a maze containing various dots,\n"
-                #known as Pac-Dots, and four ghosts.\n"
-                #"The four ghosts roam the maze, trying to kill Pac-Man.\n"
-                #"If any of the ghosts hit Pac-Man, he loses a life;\n"
-                #"the game is over.\n")
+                
+
             elif self.setting:
                 image = pygame.image.load("./resources/tmp_bg.png")
                 image.convert()
@@ -233,29 +163,97 @@ class Game(object):
                 maze_matrix[-1][-2] = 0
 
                 self.maze_matrix = maze_matrix
+                self.width = width 
+                self.height = height 
+                self.w = w
 
 
                 # print(maze_matrix)
                 # print(draw_step)
 
                 maze_drawing2D(draw_step, algorithm)
-                pygame.image.save(screen, "./resources/maze2D.jpg")
+                # pygame.image.save(screen, "./resources/maze2D.jpg")
                 self.maze2D = False
             else:
                 if not self.maze3D:
-                    image = pygame.image.load("./resources/maze2D.jpg")
-                    image.convert()
-                    screen.blit(image, (0,0))
+                    # image = pygame.image.load("./resources/maze2D.jpg")
+                    # image.convert()
+                    # screen.blit(image, (0,0))
+                    
+                    self.maze_reconstruction(screen, self.maze_matrix, self.width, self.height, self.w)
                     self.display_message_picked_position(screen,"Press ENTER to start", (760, 500))
-                else:
+                    pygame.display.update()
+                elif not self.show_result:
                     screen.fill(CYAN)
                     self.display_message(screen,["3D map is coming!"])
-                    print(self.maze_matrix)
+                    # print(self.maze_matrix)
+                    # Thomas 好帥:把Maze3D加到這
+                    self.show_result = True
+                elif not self.display_result:
+                    self.maze_reconstruction(screen, self.maze_matrix, self.width, self.height, self.w, display_note=False)
+                    path = shortest_path_bfs(self.maze_matrix, (0, 1), (2*self.width-1, 2*self.height), 2*self.width+1, 2*self.height+1)
+                    print(path)
+                    self.carve_player_movements(screen, self.w, path)
+                    self.display_result = True
+                else:
+                    self.maze_reconstruction(screen, self.maze_matrix, self.width, self.height, self.w, display_note=False)
+                    path = shortest_path_bfs(self.maze_matrix, (0, 1), (2*self.width-1, 2*self.height), 2*self.width+1, 2*self.height+1)
+                    self.carve_player_movements(screen, self.w, path, animation=False)
 
 
 
             
         pygame.display.flip()
+
+    def maze_reconstruction(self, screen, maze_matrix, width, height, w, display_note = True):
+        bias_x = 24
+        bias_y = 18
+        blue_violet = (138, 43, 226)
+        lightcoral = (240, 128, 128)
+        screen.fill(lightcoral)
+        pygame.draw.rect(screen, blue_violet,(bias_x, bias_y, 720, 540))
+        build_grid(width, height, w)
+        alg_dic = {0:"dfs_backtrack", 1:"randomized_kruskal", 2:"randomized_prims"} 
+        algorithm = alg_dic[self.chosenalgorithm]
+
+        for j in range(2*height+1):
+            for i in range(2*width+1):
+                if i != 0 and i != 2*width and j != 0 and j != 2*height:
+                    if (i+j)%2 == 1 and maze_matrix[j][i] == 0:
+                        if j % 2 == 1:
+                            remove_vertical(bias_x+(i//2)*w, bias_y+((j-1)//2)*w, w)
+                        else:
+                            remove_horizontal(bias_x+((i-1)//2)*w, bias_y+(j//2)*w, w)
+        if display_note:
+            note = pygame.image.load("./resources/note_" + algorithm + ".png").convert_alpha()
+            note = pygame.transform.scale(note, (250, 450))
+            screen.blit(note, (760, 20))
+
+    def carve_player_movements(self, screen, w, movements, animation=True):
+        bias_x = 24
+        bias_y = 18
+
+        footprint = pygame.image.load("./resources/footprint.png").convert_alpha()
+        footprint = pygame.transform.scale(footprint, (w-1, w-1))
+
+        for move in movements:
+            if animation == True:
+                time.sleep(0.1)
+            col, row = move
+            if col%2 == 1 and row%2 == 1:
+                x = bias_x+((col-1)//2)*w
+                y = bias_y+((row-1)//2)*w
+                # highlight_coloring(x, y, w)
+                screen.blit(footprint, (x+1, y+1))
+                if animation == True:
+                    pygame.display.update()
+        pygame.display.update()
+
+            
+
+
+
+        
 
     def display_message_picked_position(self, screen, message, pos, color=WHITE):
         label = self.font.render(message,True,color)
