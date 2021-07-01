@@ -155,18 +155,20 @@ class Game(object):
     def display_frame(self,screen):
         # First, clear the screen to white. Don't put other drawing commands
         #screen.fill(seBLACK)
-        image = pygame.image.load("./resources/among_us_11.jpg")
+        image = pygame.image.load("./resources/tmp_bg.png")
         image.convert()
         image = pygame.transform.scale(image, (1024, 576))
         screen.blit(image, (0,0))
         # --- Drawing code should go here
         if self.game_over:
             if self.about:
-                 image = pygame.image.load("./resources/among_us_11.jpg")
-                 image.convert()
-                 image = pygame.transform.scale(image, (1024, 576))
-                 screen.blit(image, (0,0))
-                 self.display_message(screen,["Find the Way to Escape from the MAZE!","Use Up,Down,Left,Right in Keyboard and Mouse to control","Have Fun!"])
+                image = pygame.image.load("./resources/tmp_bg.png")
+                image.convert()
+                image = pygame.transform.scale(image, (1024, 576))
+                screen.blit(image, (0,0))
+                self.display_message(screen,["Select the maze-generating algorithm and map size in Setting.", "Press LEFT and RIGHT on your keyboard to adjust your vision", "and press UP to proceed,","Find the Way to escape from the MAZE!","Enjoy the 3D world!"])
+                label = self.font.render("Press ESC to return",True, WHITE)
+                screen.blit(label, (700, 520))
                 #print(bool(self.setting))
                 #self.display_message(screen,"QAQ",2)
                 #"a maze containing various dots,\n"
@@ -175,7 +177,7 @@ class Game(object):
                 #"If any of the ghosts hit Pac-Man, he loses a life;\n"
                 #"the game is over.\n")
             elif self.setting:
-                image = pygame.image.load("./resources/among_us_11.jpg")
+                image = pygame.image.load("./resources/tmp_bg.png")
                 image.convert()
                 image = pygame.transform.scale(image, (1024, 576))
                 screen.blit(image, (0,0))
@@ -277,6 +279,7 @@ class Game(object):
 ##          # t_h: total height of text block
             t_h = len(message) * height 
             posY = (SCREEN_HEIGHT /2 - (t_h /2) + (index * height))
+            posX = 120
             screen.blit(label,(posX,posY))
 
 
@@ -374,29 +377,32 @@ class Setting(object):
 ##            t_h = len(self.items) * height 
 ##            posY = (SCREEN_HEIGHT *(2/3) - (t_h /2) + (index * height))
             if index ==0:
-                posX,posY = 325,390
+                posX,posY = 325,340
             elif index ==1:
-                posX,posY = 530,390
+                posX,posY = 530,340
             elif index ==2:
-                posX,posY = 740,390
+                posX,posY = 740,340
             elif index ==3:
-                posX,posY = 325,490
+                posX,posY = 325,440
             elif index ==4:
-                posX,posY = 530,490
+                posX,posY = 530,440
             elif index ==5:
-                posX,posY = 740,490
+                posX,posY = 740,440
             elif index ==6:
                 posX,posY = (SCREEN_WIDTH /2) - (width)/2 , SCREEN_HEIGHT / 5
                 label = self.font_title.render(item,True,self.font_color)
             elif index ==7:
-                posX,posY = 100,390
+                posX,posY = 100,340
             elif index ==8:
-                posX,posY = 72,490
+                posX,posY = 72,440
             
             if index < 6:
                 self.image_blitter(url, screen, (150, 80), (posX-20, posY-20))
 
             screen.blit(label,(posX,posY))
+        
+        label = self.font.render("Press ESC to return",True,self.font_color)
+        screen.blit(label, (700, 520))
     
     def image_blitter(self, url, screen, scale, pos):
         image = pygame.image.load("./resources/" + url)
