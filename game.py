@@ -26,12 +26,13 @@ class Game(object):
         self.score = 0
         self.maze2D = False
         self.maze3D = False
+        self.maze_matrix = []
         # Create the font for displaying the score on the screen
         self.font = pygame.font.Font(None,35)
         self.font_small = pygame.font.Font(None, 20)
         # Create the menu of the game
         self.menu = Menu(("Start","Setting","Guide","Exit"),font_color = WHITE,font_size=50)
-        self.set = Setting(("DFS","Kruskal","Prim's","Size1","Size2","Size3","Setting","Algorothm : ","Size of Maze : "),font_color = WHITE,font_size=30)
+        self.set = Setting(("DFS","Kruskal","Prim's","Small","Normal","Big","Setting","Algorothm  : ","Size of Maze  : "),font_color = WHITE,font_size=35)
 ##        # Create the player
 ##        self.player = Player(32,128,"player.png")
 ##        # Create the blocks that will set the paths where the player can go
@@ -155,18 +156,20 @@ class Game(object):
     def display_frame(self,screen):
         # First, clear the screen to white. Don't put other drawing commands
         #screen.fill(seBLACK)
-        image = pygame.image.load("./resources/among_us_11.jpg")
+        image = pygame.image.load("./resources/tmp_bg.png")
         image.convert()
         image = pygame.transform.scale(image, (1024, 576))
         screen.blit(image, (0,0))
         # --- Drawing code should go here
         if self.game_over:
             if self.about:
-                 image = pygame.image.load("./resources/among_us_11.jpg")
-                 image.convert()
-                 image = pygame.transform.scale(image, (1024, 576))
-                 screen.blit(image, (0,0))
-                 self.display_message(screen,["Find the Way to Escape from the MAZE!","Use Up,Down,Left,Right in Keyboard and Mouse to control","Have Fun!"])
+                image = pygame.image.load("./resources/tmp_bg.png")
+                image.convert()
+                image = pygame.transform.scale(image, (1024, 576))
+                screen.blit(image, (0,0))
+                self.display_message(screen,["Select the maze-generating algorithm and map size in Setting.", "Press LEFT and RIGHT on your keyboard to adjust your vision", "and press UP to proceed,","Find the Way to escape from the MAZE!","Enjoy the 3D world!"])
+                label = self.font.render("Press ESC to return",True, WHITE)
+                screen.blit(label, (700, 520))
                 #print(bool(self.setting))
                 #self.display_message(screen,"QAQ",2)
                 #"a maze containing various dots,\n"
@@ -175,7 +178,7 @@ class Game(object):
                 #"If any of the ghosts hit Pac-Man, he loses a life;\n"
                 #"the game is over.\n")
             elif self.setting:
-                image = pygame.image.load("./resources/among_us_11.jpg")
+                image = pygame.image.load("./resources/tmp_bg.png")
                 image.convert()
                 image = pygame.transform.scale(image, (1024, 576))
                 screen.blit(image, (0,0))
@@ -229,6 +232,8 @@ class Game(object):
                 maze_matrix[1][0] = 0
                 maze_matrix[-1][-2] = 0
 
+                self.maze_matrix = maze_matrix
+
 
                 # print(maze_matrix)
                 # print(draw_step)
@@ -245,6 +250,7 @@ class Game(object):
                 else:
                     screen.fill(CYAN)
                     self.display_message(screen,["3D map is coming!"])
+                    print(self.maze_matrix)
 
 
 
@@ -277,6 +283,7 @@ class Game(object):
 ##          # t_h: total height of text block
             t_h = len(message) * height 
             posY = (SCREEN_HEIGHT /2 - (t_h /2) + (index * height))
+            posX = 120
             screen.blit(label,(posX,posY))
 
 
@@ -343,49 +350,69 @@ class Menu(object):
 class Setting(object):
     state = 0
     chosen=[0,3]
-    def __init__(self,items,font_color=(0,0,0),select_color=(255,0,0),chosen_color=(0,0,255),ttf_font="./resources/times.ttf",font_size=25):
+    def __init__(self,items,font_color=(0,0,0),select_color=RED,chosen_color=BLUE,ttf_font="./resources/times.ttf",font_size=25):
         self.font_color = font_color
         self.select_color = select_color
         self.items = items
         self.font = pygame.font.Font(ttf_font,font_size)
+        self.font_title = pygame.font.Font(ttf_font, 2*font_size)
         self.chosen_color = chosen_color
         
     def display_frame(self,screen):
         for index, item in enumerate(self.items):
             if self.state == index:
+                url = "frame_selected.png"
                 label = self.font.render(item,True,self.select_color)
             else:
                 if index in self.chosen :
+                    url = "frame_chosen.png"
                     label = self.font.render(item,True,self.chosen_color)
                 else:
+                    url = "frame.png"
                     label = self.font.render(item,True,self.font_color)
            
             width = label.get_width()
             height = label.get_height()
+
+            
            
 ##            posX = (SCREEN_WIDTH /2) - (width)/2
 ##            # t_h: total height of text block
 ##            t_h = len(self.items) * height 
 ##            posY = (SCREEN_HEIGHT *(2/3) - (t_h /2) + (index * height))
             if index ==0:
-                posX,posY = 425,390
+                posX,posY = 325,340
             elif index ==1:
-                posX,posY = 630,390
+                posX,posY = 530,340
             elif index ==2:
-                posX,posY = 800,390
+                posX,posY = 740,340
             elif index ==3:
-                posX,posY = 425,490
+                posX,posY = 325,440
             elif index ==4:
-                posX,posY = 630,490
+                posX,posY = 530,440
             elif index ==5:
-                posX,posY = 800,490
+                posX,posY = 740,440
             elif index ==6:
                 posX,posY = (SCREEN_WIDTH /2) - (width)/2 , SCREEN_HEIGHT / 5
+                label = self.font_title.render(item,True,self.font_color)
             elif index ==7:
-                posX,posY = 200,390
+                posX,posY = 100,340
             elif index ==8:
-                posX,posY = 172,490
+                posX,posY = 72,440
+            
+            if index < 6:
+                self.image_blitter(url, screen, (150, 80), (posX-20, posY-20))
+
             screen.blit(label,(posX,posY))
+        
+        label = self.font.render("Press ESC to return",True,self.font_color)
+        screen.blit(label, (700, 520))
+    
+    def image_blitter(self, url, screen, scale, pos):
+        image = pygame.image.load("./resources/" + url)
+        image.convert()
+        image = pygame.transform.scale(image, scale)
+        screen.blit(image, pos)
         
     def event_handler(self,event):
         if event.type == pygame.KEYDOWN:
