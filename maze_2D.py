@@ -92,7 +92,7 @@ def maze_drawing2D(draw_step, algorithm):
             delay = 0.05
         else:
             delay = 0.1
-        test = False
+        test = True
         if test:
             delay = 0.0001
         time.sleep(delay)
@@ -253,14 +253,15 @@ def randomized_prims(width, height, w, maze_matrix):
     return maze_matrix, draw_step
         
 def shortest_path_bfs(maze_matrix, start, end, maze_width, maze_height):
+    # print(maze_matrix, start, end, maze_width, maze_height)
     Q = queue.Queue()
     Q.put(start)
-    print(Q.qsize())
+    # print(Q.qsize())
     visit = [start]
     ancestor = [[0 for j in range(maze_width)] for i in range(maze_height)]
     while end not in visit:
         x, y = Q.get()
-        print(x, y, Q.qsize())
+        # print(x, y, Q.qsize())
         if x+1 <= maze_width-1 and maze_matrix[y][x+1] == 0 and (x+1, y) not in visit:
             Q.put((x+1, y))
             visit.append((x+1, y))
@@ -280,7 +281,7 @@ def shortest_path_bfs(maze_matrix, start, end, maze_width, maze_height):
     
     path = [end]
     location = end
-    while True:
+    while start!=end:
         location = ancestor[location[1]][location[0]]
         path.insert(0, location)
         if location == start:
