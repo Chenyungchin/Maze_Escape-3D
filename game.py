@@ -29,7 +29,7 @@ class Game(object):
         self.font = pygame.font.Font(None,35)
         # Create the menu of the game
         self.menu = Menu(("Start","Setting","Guide","Exit"),font_color = WHITE,font_size=50)
-        self.set = Setting(("Algorothm1","Algorithm2","Size1","Size2","Size3","Setting","Algorothm : ","Size of Maze : "),font_color = WHITE,font_size=30)
+        self.set = Setting(("DFS","Kriskal","Prim's","Size1","Size2","Size3","Setting","Algorothm : ","Size of Maze : "),font_color = WHITE,font_size=30)
 ##        # Create the player
 ##        self.player = Player(32,128,"player.png")
 ##        # Create the blocks that will set the paths where the player can go
@@ -79,7 +79,7 @@ class Game(object):
                         if self.menu.state == 0:
                             # ---- START ------
                             self.__init__()
-                            self.chosenalgorithm,self.chosensize = self.set.chosen[0],self.set.chosen[1]-2
+                            self.chosenalgorithm,self.chosensize = self.set.chosen[0],self.set.chosen[1]-3
                             self.game_over = False
                             
                         elif self.menu.state == 1:
@@ -272,7 +272,7 @@ class Menu(object):
                     self.state -= 1
 class Setting(object):
     state = 0
-    chosen=[0,2]
+    chosen=[0,3]
     def __init__(self,items,font_color=(0,0,0),select_color=(255,0,0),chosen_color=(0,0,255),ttf_font="./times.ttf",font_size=25):
         self.font_color = font_color
         self.select_color = select_color
@@ -302,35 +302,37 @@ class Setting(object):
             elif index ==1:
                 posX,posY = 630,390
             elif index ==2:
-                posX,posY = 385,490
+                posX,posY = 800,390
             elif index ==3:
-                posX,posY = 565,490
+                posX,posY = 425,490
             elif index ==4:
-                posX,posY = 800,490
+                posX,posY = 630,490
             elif index ==5:
-                posX,posY = (SCREEN_WIDTH /2) - (width)/2 , SCREEN_HEIGHT / 5
+                posX,posY = 800,490
             elif index ==6:
-                posX,posY = 200,390
+                posX,posY = (SCREEN_WIDTH /2) - (width)/2 , SCREEN_HEIGHT / 5
             elif index ==7:
+                posX,posY = 200,390
+            elif index ==8:
                 posX,posY = 172,490
             screen.blit(label,(posX,posY))
         
     def event_handler(self,event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                if self.state > 1:
+                if self.state > 2:
                     self.state = 0
             elif event.key == pygame.K_DOWN:
-                if self.state < 2:
-                    self.state = 2
+                if self.state < 3:
+                    self.state = 3
             elif event.key == pygame.K_RIGHT:
-                if self.state %3 != 1:
+                if self.state %3 != 2:
                     self.state +=1
             elif event.key == pygame.K_LEFT:
-                if self.state != 0 and self.state != 2:
+                if self.state %3 != 0:
                     self.state -=1
             elif event.key == pygame.K_RETURN:
-                if self.state >1 :
+                if self.state >2 :
                     self.chosen.pop()
                     self.chosen.append(self.state)
                 else:
