@@ -22,7 +22,7 @@ class maze:
                 for vertice in cubeVertices:
                     vertice[0]-=i*2
                     vertice[2]-=k*2
-                if map[i][k] == 1:
+                if self.map[i][k] == 1:
                     for cubeEdge in cubeEdges:
                         for cubeVertex in cubeEdge:
                             glVertex3fv(cubeVertices[cubeVertex])

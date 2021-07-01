@@ -42,6 +42,12 @@ def game_over(x, z, bx, bz):
     else:
         return False
 
+def win(x, z, tx, tz):
+    if (x-tx)**2 + (z-tz)**2 < 0.5:
+        return True
+    else:
+        return False
+
 def calculate_pos(x, z):
     # print("("+str(round(x/2))+","+str(round(z/2))+")")
     return((round(x/2), round(z/2)))
@@ -110,6 +116,8 @@ def main(map, display):
     # LOAD OBJECT AFTER PYGAME INIT
     obj = OBJ("obj/ghost.obj", swapyz=True)
     obj.generate(scale_rate = 1, rx=-90, rz=0)
+    trophy = OBJ("obj/trophy.obj", swapyz=True)
+    trophy.generate(scale_rate = 0.1, rx=-90, rz=90, mx=len(map)*2-2, mz=len(map[0])*2-4)
     # glMatrixMode(GL_PROJECTION)
     # glLoadIdentity()
 
@@ -142,6 +150,9 @@ def main(map, display):
     while True:
         if game_over(x, z, bx, bz):
             print("game over idiot")
+            return True
+        if win(x, z, len(map)*2-2, len(map[0])*2-4):
+            print("You win")
             return True
         for event in pg.event.get():
             vx, vz, step, theta, dtheta, theta_step = handel_key(
@@ -210,15 +221,7 @@ def main(map, display):
         obj.generate(scale_rate = 0.1, rx=-90, rz=0, mx=bx, mz=bz)
         # glColor3f(0.0, 0.9, 0.0)
         obj.render()
-        # draw_ball(x=bx, y=-0.7, z=bz, r=0.3)
+        trophy.render()
         Maze.solidCube()
-        # print(shortest_path_bfs(
-        #     maze_matrix=Maze.map, 
-        #     start=calculate_pos(x, z),
-        #     end=calculate_pos(bx, bz),
-        #     maze_width=len(Maze.map[0]),
-        #     maze_height=len(Maze.map)
-        # ))
-        # wireCube(map)
         pg.display.flip()
         # pg.time.wait(10)
