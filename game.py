@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import pygame, time
 from maze_2D import build_grid, generate_maze, shortest_path_bfs, maze_drawing2D, remove_horizontal, remove_vertical, highlight_coloring
@@ -37,7 +35,6 @@ class Game(object):
         # Create the menu of the game
         self.menu = Menu(("Start","Setting","Guide","Exit"),font_color = WHITE,font_size=50)
         self.set = Setting(("DFS","Kruskal","Prim's","Small","Normal","Big","Setting","Algorothm  : ","Size of Maze  : "),font_color = WHITE,font_size=35)
-
 
     def process_events(self):
         for event in pygame.event.get(): # User did something
@@ -78,18 +75,16 @@ class Game(object):
                             return True
                     elif not self.maze2D and not self.maze3D:
                         self.maze3D = True
-           
                 elif event.key == pygame.K_ESCAPE:
                     self.game_over = True
                     self.maze3D = False
                     self.about = False
-                    self.setting = False                
-        return False
-     
+                    self.setting = False
 
+        return False
+    
     
     def display_frame(self,screen):
-        # First, clear the screen to white. Don't put other drawing commands
         #screen.fill(seBLACK)
         image = pygame.image.load("./resources/tmp_bg.png")
         image.convert()
@@ -106,7 +101,6 @@ class Game(object):
                 label = self.font.render("Press ESC to return",True, WHITE)
                 screen.blit(label, (700, 520))
                 
-
             elif self.setting:
                 image = pygame.image.load("./resources/tmp_bg.png")
                 image.convert()
@@ -116,7 +110,7 @@ class Game(object):
                 
             else:
                 self.menu.display_frame(screen)
-                #self.display_message(screen,["Find the Way to Escape from the MAZE!","Use Up,Down,Left,Right in Keyboard and Mouse to control","Have Fun!"])
+
         else:
             if self.maze2D:
                 screen.fill(LIGHTCORAL)
@@ -261,16 +255,7 @@ class Game(object):
 
 
     def display_message(self,screen,message,color=(255,255,255)):
-        #label = self.font.render(message,True,color)
-        #font = pygame.font.Font("Arial", 24)
-        # Get the width and height of the label
-        #width = label.get_width()
-        #height = label.get_height()
-        # Determine the position of the label
-        #posX = (SCREEN_WIDTH /2) - (width /2) 
-        #posY = (SCREEN_HEIGHT /2) - (height /2) + (line-1)*50
-        # Draw the label onto the screen
-        #screen.blit(label,(posX,posY))
+        
         for index,line in enumerate(message):    
             label = self.font.render(line,True,color)
         
@@ -278,7 +263,7 @@ class Game(object):
             height = label.get_height()*2
             
             posX = (SCREEN_WIDTH /2) - (width)/2
-##          # t_h: total height of text block
+            #t_h: total height of text block
             t_h = len(message) * height 
             posY = (SCREEN_HEIGHT /2 - (t_h /2) + (index * height))
             posX = 120
@@ -302,13 +287,6 @@ class Menu(object):
                 url = "frame.png"
                 label = self.font.render(item,True,self.font_color)
             
-##            width = label.get_width()
-##            height = label.get_height()
-##            
-##            posX = (SCREEN_WIDTH /2) - (width)/2
-##            # t_h: total height of text block
-##            t_h = len(self.items) * height 
-##            posY = (SCREEN_HEIGHT *(2/3) - (t_h /2) + (index * height))
             
             if index ==0:
                 posX,posY = 395,390
@@ -374,10 +352,6 @@ class Setting(object):
 
             
            
-##            posX = (SCREEN_WIDTH /2) - (width)/2
-##            # t_h: total height of text block
-##            t_h = len(self.items) * height 
-##            posY = (SCREEN_HEIGHT *(2/3) - (t_h /2) + (index * height))
             if index ==0:
                 posX,posY = 325,340
             elif index ==1:
