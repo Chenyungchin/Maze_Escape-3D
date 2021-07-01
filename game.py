@@ -28,10 +28,44 @@ class Game(object):
         self.maze3D = False
         # Create the font for displaying the score on the screen
         self.font = pygame.font.Font(None,35)
+        self.font_small = pygame.font.Font(None, 20)
         # Create the menu of the game
         self.menu = Menu(("Start","Setting","Guide","Exit"),font_color = WHITE,font_size=50)
-        self.set = Setting(("Algorothm1","Algorithm2","Size1","Size2","Size3","Setting","Algorothm : ","Size of Maze : "),font_color = WHITE,font_size=30)
-
+        self.set = Setting(("DFS","Kruskal","Prim's","Size1","Size2","Size3","Setting","Algorothm : ","Size of Maze : "),font_color = WHITE,font_size=30)
+##        # Create the player
+##        self.player = Player(32,128,"player.png")
+##        # Create the blocks that will set the paths where the player can go
+##        self.horizontal_blocks = pygame.sprite.Group()
+##        self.vertical_blocks = pygame.sprite.Group()
+##        # Create a group for the dots on the screen
+##        self.dots_group = pygame.sprite.Group()
+##        # Set the enviroment:
+##        for i,row in enumerate(enviroment()):
+##            for j,item in enumerate(row):
+##                if item == 1:
+##                    self.horizontal_blocks.add(Block(j*32+8,i*32+8,BLACK,16,16))
+##                elif item == 2:
+##                    self.vertical_blocks.add(Block(j*32+8,i*32+8,BLACK,16,16))
+##        # Create the enemies
+##        self.enemies = pygame.sprite.Group()
+##        self.enemies.add(Slime(288,96,0,2))
+##        self.enemies.add(Slime(288,320,0,-2))
+##        self.enemies.add(Slime(544,128,0,2))
+##        self.enemies.add(Slime(32,224,0,2))
+##        self.enemies.add(Slime(160,64,2,0))
+##        self.enemies.add(Slime(448,64,-2,0))
+##        self.enemies.add(Slime(640,448,2,0))
+##        self.enemies.add(Slime(448,320,2,0))
+##        # Add the dots inside the game
+##        for i, row in enumerate(enviroment()):
+##            for j, item in enumerate(row):
+##                if item != 0:
+##                    self.dots_group.add(Ellipse(j*32+12,i*32+12,WHITE,8,8))
+##
+##        # Load the sound effects
+##        self.pacman_sound = pygame.mixer.Sound("pacman_sound.ogg")
+##        self.game_over_sound = pygame.mixer.Sound("game_over_sound.ogg")
+##
 
     def process_events(self):
         for event in pygame.event.get(): # User did something
@@ -47,7 +81,7 @@ class Game(object):
                         if self.menu.state == 0:
                             # ---- START ------
                             self.__init__()
-                            self.chosenalgorithm,self.chosensize = self.set.chosen[0],self.set.chosen[1]-2
+                            self.chosenalgorithm,self.chosensize = self.set.chosen[0],self.set.chosen[1]-3
                             self.game_over = False
                             self.maze2D = True
                             self.draw_maze = True
@@ -153,11 +187,6 @@ class Game(object):
         else:
             if self.maze2D:
                 screen.fill(LIGHTCORAL)
-                
-                note = pygame.image.load("./resources/note.png").convert_alpha()
-                note = pygame.transform.scale(note, (250, 450))
-                screen.blit(note, (760, 20))
-
 
                 mapsize = self.chosensize
 
@@ -181,8 +210,14 @@ class Game(object):
                     height = 3
                 
                 build_grid(width, height, w)
+                
                 alg_dic = {0:"dfs_backtrack", 1:"randomized_kruskal", 2:"randomized_prims"} 
                 algorithm = alg_dic[self.chosenalgorithm]
+
+                note = pygame.image.load("./resources/note_" + algorithm + ".png").convert_alpha()
+                note = pygame.transform.scale(note, (250, 450))
+                screen.blit(note, (760, 20))
+
                 maze_matrix, draw_step = generate_maze(algorithm, width, height, w)
 
                 for i in range(2*height-1):
@@ -307,7 +342,7 @@ class Menu(object):
         screen.blit(image, pos)
 class Setting(object):
     state = 0
-    chosen=[0,2]
+    chosen=[0,3]
     def __init__(self,items,font_color=(0,0,0),select_color=(255,0,0),chosen_color=(0,0,255),ttf_font="./resources/times.ttf",font_size=25):
         self.font_color = font_color
         self.select_color = select_color
@@ -337,35 +372,37 @@ class Setting(object):
             elif index ==1:
                 posX,posY = 630,390
             elif index ==2:
-                posX,posY = 385,490
+                posX,posY = 800,390
             elif index ==3:
-                posX,posY = 565,490
+                posX,posY = 425,490
             elif index ==4:
-                posX,posY = 800,490
+                posX,posY = 630,490
             elif index ==5:
-                posX,posY = (SCREEN_WIDTH /2) - (width)/2 , SCREEN_HEIGHT / 5
+                posX,posY = 800,490
             elif index ==6:
-                posX,posY = 200,390
+                posX,posY = (SCREEN_WIDTH /2) - (width)/2 , SCREEN_HEIGHT / 5
             elif index ==7:
+                posX,posY = 200,390
+            elif index ==8:
                 posX,posY = 172,490
             screen.blit(label,(posX,posY))
         
     def event_handler(self,event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                if self.state > 1:
+                if self.state > 2:
                     self.state = 0
             elif event.key == pygame.K_DOWN:
-                if self.state < 2:
-                    self.state = 2
+                if self.state < 3:
+                    self.state = 3
             elif event.key == pygame.K_RIGHT:
-                if self.state %3 != 1:
+                if self.state %3 != 2:
                     self.state +=1
             elif event.key == pygame.K_LEFT:
-                if self.state != 0 and self.state != 2:
+                if self.state %3 != 0:
                     self.state -=1
             elif event.key == pygame.K_RETURN:
-                if self.state >1 :
+                if self.state >2 :
                     self.chosen.pop()
                     self.chosen.append(self.state)
                 else:
