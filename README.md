@@ -2,19 +2,22 @@
 NTUEE Data Structures Final Project
 
 ## Required Software and Modules
-Software : Python3
-Module：Pygame and OpenGL
+* Software : Python3
+* Module：Pygame and OpenGL
 (execute "pip install pygame" and "pip install PYOpenGL" to download the modules)
 
 
 ## How to Execute
-Environment : Available for Windows10 and Linux
-Executing Command: Run "python ./main.py" to begin the game. 
+* Environment : Available for Windows10 and Linux
+* Executing Command: Run "python ./main.py" to begin the game. 
 
 ## How to Play
 Select the maze-generating algorithm and map size in Setting.
+
 Press LEFT and RIGHT on your keyboard to adjust your vision and press UP to proceed.
+
 Find the way to escape from the MAZE!
+
 Enjoy the 3D world!
 
 
@@ -51,3 +54,8 @@ Enjoy the 3D world!
 7.objloader.py
 
   Load the objects that includes texture, material, color, shape, etc.
+  
+## Author
+* 詹侑昕 B08901046
+* 陳永縉 B08901061
+* 李允恩 B08901102
