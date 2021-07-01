@@ -26,6 +26,7 @@ class Game(object):
         self.score = 0
         self.maze2D = False
         self.maze3D = False
+        self.maze_matrix = []
         # Create the font for displaying the score on the screen
         self.font = pygame.font.Font(None,35)
         self.font_small = pygame.font.Font(None, 20)
@@ -231,6 +232,8 @@ class Game(object):
                 maze_matrix[1][0] = 0
                 maze_matrix[-1][-2] = 0
 
+                self.maze_matrix = maze_matrix
+
 
                 # print(maze_matrix)
                 # print(draw_step)
@@ -247,6 +250,7 @@ class Game(object):
                 else:
                     screen.fill(CYAN)
                     self.display_message(screen,["3D map is coming!"])
+                    print(self.maze_matrix)
 
 
 
