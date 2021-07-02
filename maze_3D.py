@@ -93,7 +93,7 @@ def enemy_moving(path, x, z):
     z_next, x_next = path[0]
     z_next*=2
     x_next*=2
-    v = 0.1
+    v = 1
     print(path, x, z)
     vbx = 0
     vbz = 0
@@ -130,8 +130,8 @@ def go_to_next_pipe(x, y, z, Maze):
 
 
 def main(map, display):
-    pg.init()
-    # display = (1680, 1050)
+    # pg.init()
+#     # display = (1680, 1050)
     pg.display.set_mode(display, DOUBLEBUF|OPENGL)
     texture = Texture()
     wall_texture = texture.loadImage("tex/wall.jpeg")

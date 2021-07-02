@@ -43,15 +43,15 @@ def build_grid(width, height, w):
         x = bias_x
         y += w
     
-    pygame.display.update()
+    # pygame.display.update()
 
 def remove_horizontal(x, y, w):
-    pygame.draw.line(screen, black, (x, y), (x + w, y))
-    pygame.display.update()
+    pygame.draw.line(screen, blue_violet, (x, y), (x + w, y))
+    # pygame.display.update()
 
 def remove_vertical(x, y, w):
-    pygame.draw.line(screen, black, (x, y), (x, y + w))
-    pygame.display.update()
+    pygame.draw.line(screen, blue_violet, (x, y), (x, y + w))
+    # pygame.display.update()
 
 def go_right(x, y, w):
     pygame.draw.rect(screen, blue_violet,(x+1, y+1, 2*w-1, w-1))
@@ -78,7 +78,11 @@ def cell_recoloring(x, y, w):
     pygame.display.update()
 
 def generate_maze(algorithm, width, height, w):
-    maze_matrix = [[(i+j)%2 for j in range(2*width-1)] for i in range(2*height-1)]
+    maze_matrix = [[1 for j in range(2*width-1)] for i in range(2*height-1)]
+    for j in range(2*height-1):
+        for i in range(2*width-1):
+            if i%2 == 0 and j%2 == 0:
+                maze_matrix[j][i] = 0
     if algorithm == "dfs_backtrack":
         return dfs_backtrack(w, maze_matrix)
     if algorithm == "randomized_kruskal":
@@ -281,7 +285,7 @@ def shortest_path_bfs(maze_matrix, start, end, maze_width, maze_height):
     
     path = [end]
     location = end
-    while start!=end:
+    while start != end:
         location = ancestor[location[1]][location[0]]
         path.insert(0, location)
         if location == start:
@@ -295,7 +299,37 @@ def shortest_path_bfs(maze_matrix, start, end, maze_width, maze_height):
 
 
 if __name__ == "__main__":
-    maze = [[1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 1, 0, 0, 0, 0, 0, 1], [1, 0, 0, 1, 0, 1, 0, 0, 1], [1, 0, 0, 0, 0, 0, 1, 0, 1], [1, 1, 0, 1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1, 0, 1]]
-    print(maze)
-    dao = shortest_path_bfs(maze, (0, 1), (7, 6), 9, 7)
+
+    width = 12
+    height = 9
+    w = 720 // width
+
+    
+    maze = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1], 
+  [1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1], 
+  [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1], 
+  [1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1], 
+  [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1], 
+  [1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1], 
+  [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1], 
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1], 
+  [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1], 
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1], 
+  [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1], 
+  [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1], 
+  [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1], 
+  [1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], 
+  [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1], 
+  [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1], 
+  [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1], 
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1]] 
+
+    dao = shortest_path_bfs(maze, (8, 3), (8, 3), 2*width+1, 2*height+1)
+
     print(dao)
+
+    
+
+
+# (1, 9) (2, 11) 25 19
