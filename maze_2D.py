@@ -253,7 +253,7 @@ def randomized_prims(width, height, w, maze_matrix):
     return maze_matrix, draw_step
         
 def shortest_path_bfs(maze_matrix, start, end, maze_width, maze_height):
-    print(maze_matrix, start, end, maze_width, maze_height)
+    # print(maze_matrix, start, end, maze_width, maze_height)
     Q = queue.Queue()
     Q.put(start)
     # print(Q.qsize())

@@ -37,7 +37,7 @@ def draw_ball(x, y, z, r, texture_id=None):
 
 def game_over(x, z, bx, bz):
     # print("pos", (x, z), (bx, bz))
-    if (x-bx)**2 + (z-bz)**2 < 0.5:
+    if (x-bx)**2 + (z-bz)**2 < 0.8:
         return True
     else:
         return False
@@ -93,17 +93,18 @@ def enemy_moving(path, x, z):
     z_next, x_next = path[0]
     z_next*=2
     x_next*=2
+    v = 0.1
     print(path, x, z)
     vbx = 0
     vbz = 0
     if x_next - x <= -0.019:
-        vbx = -0.05
+        vbx = -v
     elif x_next - x >= 0.019:
-        vbx = 0.05
+        vbx = v
     if z_next - z <= -0.019:
-        vbz = -0.05
+        vbz = -v
     elif z_next - z >= 0.019:
-        vbz = 0.05
+        vbz = v
     return vbx, vbz
 
 def go_to_next_pipe(x, y, z, Maze):
@@ -140,9 +141,9 @@ def main(map, display):
     init(display)
     # LOAD OBJECT AFTER PYGAME INIT
     obj = OBJ("obj/ghost.obj", swapyz=True)
-    obj.generate(scale_rate = 1, rx=-90, rz=0)
-    trophy = OBJ("obj/trophy.obj", swapyz=True)
-    trophy.generate(scale_rate = 0.1, rx=-90, rz=90, mx=len(map)*2-2, mz=len(map[0])*2-4)
+    obj.generate(scale_rate = 5, rx=-90, rz=0)
+    # trophy = OBJ("obj/trophy.obj", swapyz=True)
+    # trophy.generate(scale_rate = 0.1, rx=-90, rz=90, mx=len(map)*2-2, mz=len(map[0])*2-4)
     pipe_pos = Maze.get_pipe()
     pipe1 = OBJ("obj/MarioPipe.obj", swapyz=True)
     pipe1.generate(scale_rate=0.01, rx=-90, mx=pipe_pos[0][0], mz=pipe_pos[0][1], my=1)
@@ -162,7 +163,7 @@ def main(map, display):
     vbz = 0
     theta = 0
     dtheta = 0
-    theta_step = 5
+    theta_step = 10
     step = 0.5
     passed = False
     player_path = [(z//2, x//2)]
@@ -267,7 +268,7 @@ def main(map, display):
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
         obj.generate(scale_rate = 0.1, rx=-90, rz=0, mx=bx, mz=bz)
         obj.render()
-        trophy.render()
+        # trophy.render()
         pipe1.render()
         pipe2.render()
         Maze.solidCube(calculate_pos(x, z))
