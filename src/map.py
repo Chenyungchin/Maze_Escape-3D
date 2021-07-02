@@ -4,6 +4,7 @@ from pygame.constants import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from objloader import *
+import random
 
 cubeVertices = [[1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1],[-1,1,1],[-1,-1,-1],[-1,-1,1],[-1,1,-1]]
 cubeTextures = [[0, 0], [0, 1], [1, 1], [1, 0]]
@@ -14,6 +15,13 @@ class maze:
     def __init__(self, map, texture_id = None):
         self.map = map
         self.texture = texture_id
+        self.add_pipe()
+        print(self.map)
+        self.pipe = []
+        for i in range(len(map)):
+            for k in range(len(map[0])):
+                if map[i][k] == 2:
+                    self.pipe.append((i*2, k*2))
     def wireCube(self):
         glBegin(GL_LINES)
         glColor3f(0.5, 1.0, 1.0)
@@ -60,11 +68,40 @@ class maze:
                 for vertice in cubeVertices:
                     vertice[0]+=i*2
                     vertice[2]+=k*2
+        # glDeleteTextures(1, self.texture)
         glEnd()
     
-    def collision_detect(self, x, z):
+    def collision_detect(self, x, y, z):
         bias = 0.0
         # print(x, z, round((x+bias)/2), round((z+bias)/2))
         if round((x+bias)/2) >= 0 and round((z+bias)/2) >= 0:
             if self.map[round((x+bias)/2)][round((z+bias)/2)] == 1:
                 return True
+            elif self.map[round((x+bias)/2)][round((z+bias)/2)] == 2 and y < 0.5:
+                print(y)
+                return True
+    def on_pipe(self, x, z, y):
+        bias = 0.0
+        if round((x+bias)/2) >= 0 and round((z+bias)/2) >= 0:
+            if self.map[round((x+bias)/2)][round((z+bias)/2)] == 2 and y >= 1:
+                print("on pipe")
+                return True
+
+    def get_next_pipe(self, x, z):
+        d1 = (self.pipe[0][0]-x)**2 + (self.pipe[0][1]-z)**2
+        d2 = (self.pipe[1][0]-x)**2 + (self.pipe[1][1]-z)**2
+        if d1 < d2:
+            return self.pipe[1]
+        else:
+            return self.pipe[0]
+
+    def get_pipe(self):
+        return self.pipe
+
+    def add_pipe(self):
+        dao = 2
+        while dao > 0:
+            point = (random.randint(0, len(self.map)-1), random.randint(0, len(self.map[0])-1))
+            if self.map[point[0]][point[1]] == 0:
+                self.map[point[0]][point[1]] = 2   
+                dao -= 1

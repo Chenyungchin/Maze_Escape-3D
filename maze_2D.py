@@ -253,7 +253,7 @@ def randomized_prims(width, height, w, maze_matrix):
     return maze_matrix, draw_step
         
 def shortest_path_bfs(maze_matrix, start, end, maze_width, maze_height):
-    # print(maze_matrix, start, end, maze_width, maze_height)
+    print(maze_matrix, start, end, maze_width, maze_height)
     Q = queue.Queue()
     Q.put(start)
     # print(Q.qsize())
@@ -262,19 +262,19 @@ def shortest_path_bfs(maze_matrix, start, end, maze_width, maze_height):
     while end not in visit:
         x, y = Q.get()
         # print(x, y, Q.qsize())
-        if x+1 <= maze_width-1 and maze_matrix[y][x+1] == 0 and (x+1, y) not in visit:
+        if x+1 <= maze_width-1 and maze_matrix[y][x+1] != 1 and (x+1, y) not in visit:
             Q.put((x+1, y))
             visit.append((x+1, y))
             ancestor[y][x+1] = (x, y)
-        if x-1 >= 0 and maze_matrix[y][x-1] == 0 and (x-1, y) not in visit:
+        if x-1 >= 0 and maze_matrix[y][x-1] != 1 and (x-1, y) not in visit:
             Q.put((x-1, y))
             visit.append((x-1, y))
             ancestor[y][x-1] = (x, y)
-        if y+1 <= maze_height-1 and maze_matrix[y+1][x] == 0 and (x, y+1) not in visit:
+        if y+1 <= maze_height-1 and maze_matrix[y+1][x] != 1 and (x, y+1) not in visit:
             Q.put((x, y+1))
             visit.append((x, y+1))
             ancestor[y+1][x] = (x, y)
-        if y-1 >= 0 and maze_matrix[y-1][x] == 0 and (x, y-1) not in visit:
+        if y-1 >= 0 and maze_matrix[y-1][x] != 1 and (x, y-1) not in visit:
             Q.put((x, y-1))
             visit.append((x, y-1))
             ancestor[y-1][x] = (x, y)
