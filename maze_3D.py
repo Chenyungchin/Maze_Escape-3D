@@ -93,7 +93,7 @@ def enemy_moving(path, x, z):
     z_next, x_next = path[0]
     z_next*=2
     x_next*=2
-    v = 1
+    v = 0.1
     print(path, x, z)
     vbx = 0
     vbz = 0
@@ -179,13 +179,9 @@ def main(map, display):
     # pacman = texture.loadImage("tex/pacman.bmp")
     while True:
         if game_over(x, z, bx, bz):
-            print("game over")
-            print(player_path)
-            return True, player_path
+            return player_path
         if win(x, z, len(map)*2-2, len(map[0])*2-4):
-            print("You win")
-            print(player_path)
-            return True, player_path
+            return player_path
         for event in pg.event.get():
             vx, vy, vz, step, theta, dtheta, theta_step = handel_key(
                 event, vx, vy, vz, y, step, theta, dtheta, theta_step)

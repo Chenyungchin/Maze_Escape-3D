@@ -182,11 +182,10 @@ class Game(object):
                     # self.display_message(screen,["3D map is coming!"])
                     # print(self.maze_matrix)
                     # Thomas 好帥:把Maze3D加到這
-                    self.game_over, self.path = maze_3D.main(self.maze_matrix, display=(SCREEN_WIDTH, SCREEN_HEIGHT))
-                    print("dao")
+                    self.path = maze_3D.main(self.maze_matrix, display=(SCREEN_WIDTH, SCREEN_HEIGHT))
                     self.show_result = True
+                    screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
                 elif not self.display_result:
-                    print("dao2")
                     self.maze_reconstruction(screen, self.maze_matrix, self.width, self.height, self.w, display_note=False)
                     path = shortest_path_bfs(self.maze_matrix, (0, 1), (2*self.width-1, 2*self.height), 2*self.width+1, 2*self.height+1)
                     print(self.path)

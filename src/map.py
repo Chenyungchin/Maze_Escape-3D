@@ -168,7 +168,7 @@ class maze:
                 return True
             elif self.map[round((x+bias)/2)][round((z+bias)/2)] == 2 and y < 0.2:
                 print(y)
-                if (x-round(x/2)*2)**2 + (y-round(y/2)*2)**2 < 1:
+                if (x-round(x/2)*2)**2 + (y-round(y/2)*2)**2 < 0.2:
                     return True
     def on_pipe(self, x, z, y):
         bias = 0.0
