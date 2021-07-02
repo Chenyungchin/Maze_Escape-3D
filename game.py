@@ -1,6 +1,6 @@
 
 import pygame, time
-from maze_2D import build_grid, generate_maze, shortest_path_bfs, maze_drawing2D, remove_horizontal, remove_vertical, highlight_coloring
+from maze_2D import build_grid, generate_maze, shortest_path_bfs, maze_drawing2D, remove_horizontal, remove_vertical, highlight_coloring, define_locations
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 576
 
@@ -32,6 +32,7 @@ class Game(object):
         self.game_time = [0, 0]
         self.win = True
         self.path = []
+        self.locations = ((0, 0), (0, 0), (0, 0))
         # Create the font for displaying the score on the screen
         self.font = pygame.font.Font(None,35)
         self.font_small = pygame.font.Font(None, 20)
@@ -164,7 +165,9 @@ class Game(object):
                 self.height = height 
                 self.w = w
 
-
+                self.locations = define_locations(self.maze_matrix, 2*self.width+1, 2*self.height+1)
+                
+                print(self.locations)
                 # print(maze_matrix)
                 # print(draw_step)
 

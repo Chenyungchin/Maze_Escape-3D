@@ -292,7 +292,26 @@ def shortest_path_bfs(maze_matrix, start, end, maze_width, maze_height):
     return path
 
 
-        
+def define_locations(maze_matrix, maze_width, maze_height):
+    sx, sy = (0, 1)
+    ex, ey = (maze_width-2, maze_height-1)
+    while True:
+        ghostx = random.randint(1, maze_width-2)
+        ghosty = random.randint(1, maze_height-2)
+        if abs(ghostx-ex) + abs(ghosty-ey) <= (maze_width+maze_height)/3 and maze_matrix[ghosty][ghostx] == 0:
+            break
+    while True:
+        pipex1 = random.randint(1, maze_width-2)
+        pipey1 = random.randint(1, maze_height-2)
+        if abs(pipex1-sx) + abs(pipey1-sy) >= (maze_width+maze_height)/5 and abs(pipex1-ex) + abs(pipey1-ey) >= (maze_width+maze_height)/5 and maze_matrix[pipey1][pipex1] == 0:
+            break
+    while True:
+        pipex2 = random.randint(1, maze_width-2)
+        pipey2 = random.randint(1, maze_height-2)
+        if abs(pipex1-sx) + abs(pipey1-sy) >= (maze_width+maze_height)/5 and abs(pipex1-ex) + abs(pipey1-ey) >= (maze_width+maze_height)/5 and abs(pipex1-pipex2) + abs(pipey1-pipey2) >= (maze_width+maze_height)/3 and maze_matrix[pipey2][pipex2] == 0:
+            break
+
+    return (ghostx, ghosty), (pipex1, pipey1), (pipex2, pipey2)
 
 
 
@@ -324,10 +343,11 @@ if __name__ == "__main__":
   [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1], 
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1]] 
 
-    dao = shortest_path_bfs(maze, (8, 3), (8, 3), 2*width+1, 2*height+1)
+    
+
+    dao = define_locations(maze, 25, 19)
 
     print(dao)
-
     
 
 
