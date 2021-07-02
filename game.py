@@ -182,7 +182,7 @@ class Game(object):
                     # self.display_message(screen,["3D map is coming!"])
                     # print(self.maze_matrix)
                     # Thomas 好帥:把Maze3D加到這
-                    self.path = maze_3D.main(self.maze_matrix, display=(SCREEN_WIDTH, SCREEN_HEIGHT))
+                    self.win, self.path = maze_3D.main(self.maze_matrix, display=(SCREEN_WIDTH, SCREEN_HEIGHT))
                     self.show_result = True
                     screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
                 elif not self.display_result:
