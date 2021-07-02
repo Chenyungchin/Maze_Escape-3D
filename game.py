@@ -243,17 +243,54 @@ class Game(object):
         footprint = pygame.image.load("./resources/footprint.png").convert_alpha()
         footprint = pygame.transform.scale(footprint, (w-1, w-1))
 
-        for move in movements:
+        left =  pygame.image.load("./resources/left.png").convert_alpha()
+        left = pygame.transform.scale(left, (w, w))
+
+        right =  pygame.image.load("./resources/right.png").convert_alpha()
+        right = pygame.transform.scale(right, (w, w))
+
+        up =  pygame.image.load("./resources/up.png").convert_alpha()
+        up = pygame.transform.scale(up, (w, w))
+
+        down =  pygame.image.load("./resources/down.png").convert_alpha()
+        down = pygame.transform.scale(down, (w, w))
+
+        best_path = shortest_path_bfs(self.maze_matrix, (0, 1), (2*self.width-1, 2*self.height), 2*self.width+1, 2*self.height+1)
+        print(best_path)
+        last_col, last_row  = -1, 1
+        for i in range(max(len(movements), len(best_path))):
             if animation == True:
                 time.sleep(0.1)
-            col, row = move
-            if col%2 == 1 and row%2 == 1:
-                x = bias_x+((col-1)//2)*w
-                y = bias_y+((row-1)//2)*w
-                # highlight_coloring(x, y, w)
-                screen.blit(footprint, (x+1, y+1))
-                if animation == True:
-                    pygame.display.update()
+            
+            if i < len(best_path):
+
+                col, row = best_path[i]
+                if col > last_col:
+                    direct = right
+                elif col < last_col:
+                    direct = left
+                elif row > last_row:
+                    direct = down
+                else:
+                    direct = up
+                last_col, last_row = col, row
+
+                if col%2 == 1 and row%2 == 1:
+                    x = bias_x+((col-1)//2)*w
+                    y = bias_y+((row-1)//2)*w
+                    # highlight_coloring(x, y, w)
+                    screen.blit(direct, (x+1, y+1))
+                    if animation == True:
+                        pygame.display.update() 
+            if i < len(movements):
+                col, row = movements[i]
+                if col%2 == 1 and row%2 == 1:
+                    x = bias_x+((col-1)//2)*w
+                    y = bias_y+((row-1)//2)*w
+                    # highlight_coloring(x, y, w)
+                    screen.blit(footprint, (x+1, y+1))
+                    if animation == True:
+                        pygame.display.update()
         pygame.display.update()
     
     def rewind(self, screen, time):
