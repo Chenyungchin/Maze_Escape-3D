@@ -1,4 +1,3 @@
-from os import XATTR_SIZE_MAX
 import pygame as pg
 from pygame.locals import *
 from pygame.constants import *
@@ -133,9 +132,11 @@ def main(map, display):
     pg.init()
     # display = (1680, 1050)
     pg.display.set_mode(display, DOUBLEBUF|OPENGL)
-    # texture = Texture()
-    # wall_texture = texture.loadImage("tex/wall2.bmp")
-    Maze = maze(map=map)
+    texture = Texture()
+    wall_texture = texture.loadImage("tex/wall.jpeg")
+    ceil_texture = texture.loadImage("tex/top.png")
+    floor_texture = texture.loadImage("tex/floor_01.png")
+    Maze = maze(map=map, cube=wall_texture, floor=floor_texture, ceil=ceil_texture)
     init(display)
     # LOAD OBJECT AFTER PYGAME INIT
     obj = OBJ("obj/ghost.obj", swapyz=True)
@@ -177,7 +178,7 @@ def main(map, display):
     # pacman = texture.loadImage("tex/pacman.bmp")
     while True:
         if game_over(x, z, bx, bz):
-            print("game over idiot")
+            print("game over")
             print(player_path)
             return True, player_path
         if win(x, z, len(map)*2-2, len(map[0])*2-4):
@@ -269,5 +270,7 @@ def main(map, display):
         trophy.render()
         pipe1.render()
         pipe2.render()
-        Maze.wireCube()
+        Maze.solidCube(calculate_pos(x, z))
+        Maze.draw_plane(50)
+        Maze.draw_ceil()
         pg.display.flip()
