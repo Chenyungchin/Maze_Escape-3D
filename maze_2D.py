@@ -266,7 +266,7 @@ def shortest_path_bfs(maze_matrix, start, end, maze_width, maze_height):
     while end not in visit:
         x, y = Q.get()
         # print(x, y, Q.qsize())
-        if x+1 <= maze_width-1 and maze_matrix[y][x+1] != 1 and (x+1, y) not in visit:
+        if x+1 <= maze_width-1 and maze_matrix[y][x+1] == 0 and (x+1, y) not in visit:
             Q.put((x+1, y))
             visit.append((x+1, y))
             ancestor[y][x+1] = (x, y)
