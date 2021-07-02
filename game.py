@@ -194,7 +194,7 @@ class Game(object):
                 else:
                     self.maze_reconstruction(screen, self.maze_matrix, self.width, self.height, self.w, display_note=False)
                     path = shortest_path_bfs(self.maze_matrix, (0, 1), (2*self.width-1, 2*self.height), 2*self.width+1, 2*self.height+1)
-                    self.carve_player_movements(screen, self.w, path, animation=False)
+                    self.carve_player_movements(screen, self.w, self.path, animation=False)
 
 
 
