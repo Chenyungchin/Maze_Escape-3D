@@ -90,14 +90,14 @@ class Game(object):
     
     def display_frame(self,screen):
         #screen.fill(seBLACK)
-        image = pygame.image.load("./resources/tmp_bg.png")
+        image = pygame.image.load("./resources/bg.png")
         image.convert()
         image = pygame.transform.scale(image, (1024, 576))
         screen.blit(image, (0,0))
         # --- Drawing code should go here
         if self.game_over:
             if self.about:
-                image = pygame.image.load("./resources/tmp_bg.png")
+                image = pygame.image.load("./resources/bg.png")
                 image.convert()
                 image = pygame.transform.scale(image, (1024, 576))
                 screen.blit(image, (0,0))
@@ -106,7 +106,7 @@ class Game(object):
                 screen.blit(label, (700, 520))
                 
             elif self.setting:
-                image = pygame.image.load("./resources/tmp_bg.png")
+                image = pygame.image.load("./resources/bg.png")
                 image.convert()
                 image = pygame.transform.scale(image, (1024, 576))
                 screen.blit(image, (0,0))
@@ -114,6 +114,9 @@ class Game(object):
                 
             else:
                 self.menu.display_frame(screen)
+                caption = pygame.image.load("./resources/caption.png").convert_alpha()
+                screen.blit(caption, (60, 70))
+                pygame.display.update()
 
         else:
             if self.maze2D:
@@ -377,17 +380,17 @@ class Menu(object):
             
             
             if index ==0:
-                posX,posY = 395,390
-                frame_x, frame_y = 370, 380
+                posX,posY = 395,340
+                frame_x, frame_y = 370, 330
             elif index ==1:
-                posX,posY = 537,390
-                frame_x, frame_y = 535, 380
+                posX,posY = 537,340
+                frame_x, frame_y = 535, 330
             elif index ==2:
-                posX,posY = 385,490
-                frame_x, frame_y = 370, 480
+                posX,posY = 385,440
+                frame_x, frame_y = 370, 430
             elif index ==3:
-                posX,posY = 565,490
-                frame_x, frame_y = 535, 480
+                posX,posY = 565,440
+                frame_x, frame_y = 535, 430
             self.image_blitter(url, screen, (150, 80), (frame_x, frame_y))
             screen.blit(label,(posX,posY))
         
