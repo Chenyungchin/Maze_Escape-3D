@@ -116,15 +116,20 @@ def maze_drawing2D(draw_step, algorithm, locations, maze_width, maze_height):
 
     bias_x = 24
     bias_y = 18
-    icons = ["./resources/start.png", "./resources/ghost.png", "./resources/pipe.jpg", "./resources/pipe.jpg", "./resources/trophy.jpg"]
-    locations_all = [(0, 1), locations[0], locations[1], locations[2], (maze_width-2, maze_height-1)]
+    delay = 0.5
+    if test:
+        delay = 0.001
+    icons = ["./resources/start.png", "./resources/ghost.png", "./resources/pipe.png", "./resources/pipe.png", "./resources/trophy.png"]
+    locations_all = [(1, 1), locations[0], locations[1], locations[2], (maze_width-2, maze_height-2)]
     for index, url in enumerate(icons):
         icon = pygame.image.load(url).convert_alpha()
         icon = pygame.transform.scale(icon, (w, w))
         col, row = locations_all[index]
         x, y = bias_x+((col-1)//2)*w, bias_y+((row-1)//2)*w
         screen.blit(icon, (x, y))
+        pygame.display.update()
         time.sleep(delay)
+    
 
  
 
@@ -323,10 +328,30 @@ def define_locations(maze_matrix, maze_width, maze_height):
     while True:
         pipex2 = random.randint(1, maze_width-2)
         pipey2 = random.randint(1, maze_height-2)
-        if abs(pipex1-sx) + abs(pipey1-sy) >= (maze_width+maze_height)/5 and abs(pipex1-ex) + abs(pipey1-ey) >= (maze_width+maze_height)/5 and abs(pipex1-pipex2) + abs(pipey1-pipey2) >= (maze_width+maze_height)/3 and maze_matrix[pipey2][pipex2] == 0:
+        if abs(pipex2-sx) + abs(pipey2-sy) >= (maze_width+maze_height)/5 and abs(pipex2-ex) + abs(pipey2-ey) >= (maze_width+maze_height)/5 and abs(pipex1-pipex2) + abs(pipey1-pipey2) >= (maze_width+maze_height)/3 and maze_matrix[pipey2][pipex2] == 0:
             break
 
     return (ghostx, ghosty), (pipex1, pipey1), (pipex2, pipey2)
+
+def auxiliary_map(player, ghost, pipe1, pipe2, maze_width, maze_height):
+    # start, end, player, ghost, pipe1, pipe2
+    map_width = 160
+    map_height = 120
+    bias_x = 1024-map_width
+    bias_y = 0
+    wx = round(map_width/maze_width)
+    wy = round(map_height/maze_height)
+    
+    pygame.draw.rect(screen, blue_violet,(bias_x, 0, map_width, map_height))
+    positions = [(0, 1), (maze_width-2, maze_height-1), player, ghost, pipe1, pipe2]
+    icons = ["./resources/start.png", "./resources/trophy.png", "./resources/player.png", "./resources/ghost.png", "./resources/pipe.png", "./resources/pipe.png"]
+    
+    for index, url in enumerate(icons):
+        icon = pygame.image.load(url).convert_alpha()
+        icon = pygame.transform.scale(icon, (3*wx, 3*wy))
+        col, row = positions[index]
+        x, y = bias_x+col*wx, bias_y+row*wy
+        screen.blit(icon, (x, y-wy))
 
 
 
