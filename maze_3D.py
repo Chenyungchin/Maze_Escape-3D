@@ -7,7 +7,9 @@ from objloader import *
 from src.texture import Texture
 import math
 from src.map import maze
-from maze_2D import shortest_path_bfs
+from maze_2D import shortest_path_bfs, auxiliary_map
+
+# texID = glGenTextures(1)
 
 def init(display):
     glLightfv(GL_LIGHT0, GL_POSITION,  (-40, 200, 100, 0.0))
@@ -109,6 +111,15 @@ def enemy_moving(path, x, z):
 
 def go_to_next_pipe(x, y, z, Maze):
     x_next, z_next = Maze.get_next_pipe(x, z)
+    path = shortest_path_bfs(
+        maze_matrix=Maze.map, 
+        start=calculate_pos(z_next, x_next),
+        end=(len(Maze.map[0])-2, len(Maze.map)-1),
+        maze_width=len(Maze.map[0]),
+        maze_height=len(Maze.map),
+    )
+    path.pop(0)
+    # glTranslatef(path[0][1]*2-x, y, path[0][0]*2-z)
     # glPushMatrix()
     # glTranslatef(x, 0.5, z)
     # for i in range(2):
@@ -117,7 +128,7 @@ def go_to_next_pipe(x, y, z, Maze):
     #     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
     # glPopMatrix()
     # glPushMatrix()
-    glTranslatef(x_next-x, 1-y, z_next-z)
+    glTranslatef(x_next-x, y-1, z_next-z)
     # pg.time.wait(300)
     # glTranslatef(x_next, -0.5, z_next)
     # for i in range(2):
@@ -126,20 +137,38 @@ def go_to_next_pipe(x, y, z, Maze):
     #     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
     # glPopMatrix()
     
+    # return path[0][1]*2, 0, path[0][0]*2
     return x_next, 1, z_next
+
+# def surfaceToTexture( pygame_surface ):
+#     global texID
+#     rgb_surface = pygame.image.tostring( pygame_surface, 'RGB')
+#     glBindTexture(GL_TEXTURE_2D, texID)
+#     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+#     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+#     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+#     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+#     surface_rect = pygame_surface.get_rect()
+#     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, surface_rect.width, surface_rect.height, 0, GL_RGB, GL_UNSIGNED_BYTE, rgb_surface)
+#     glGenerateMipmap(GL_TEXTURE_2D)
+#     glBindTexture(GL_TEXTURE_2D, 0)
 
 
 def main(map, location, display):
-    # pg.init()
-#     # display = (1680, 1050)
+    # global texID
+    # init pygame window
+    pg.init()
     pg.display.set_mode(display, DOUBLEBUF|OPENGL)
+    # load texture
     texture = Texture()
     wall_texture = texture.loadImage("tex/wall.jpeg")
     ceil_texture = texture.loadImage("tex/sky.jpg")
     floor_texture = texture.loadImage("tex/floor_01.png")
+    # initialize maze
     Maze = maze(map=map, location=location, cube=wall_texture, floor=floor_texture, ceil=ceil_texture)
+    # basic opengl configuration
     init(display)
-    # LOAD OBJECT AFTER PYGAME INIT
+    # load object after pygame init
     obj = OBJ("obj/ghost.obj", swapyz=True)
     obj.generate(scale_rate = 5, rx=-90, rz=0)
     # trophy = OBJ("obj/trophy.obj", swapyz=True)
@@ -150,6 +179,7 @@ def main(map, location, display):
     pipe2 = OBJ("obj/MarioPipe.obj", swapyz=True)
     pipe2.generate(scale_rate=0.01, rx=-90, mx=pipe_pos[1][0], mz=pipe_pos[1][1], my=1)
 
+    # basic parameters
     x = 2
     y = 0
     z = 0
@@ -157,8 +187,8 @@ def main(map, location, display):
     vy = 0
     vx = 0
     g = 0.05
-    bx = location[0][1]
-    bz = location[0][0]
+    bx = location[0][1]*2
+    bz = location[0][0]*2
     vbx = 0
     vbz = 0
     theta = 0
@@ -176,10 +206,9 @@ def main(map, location, display):
     )
     glTranslatef(x, 0.0, z)
     
-    # pacman = texture.loadImage("tex/pacman.bmp")
     while True:
-        # if game_over(x, z, bx, bz):
-            # return False, player_path
+        if game_over(x, z, bx, bz):
+            return False, player_path
         if win(x, z, len(map)*2-2, len(map[0])*2-4):
             return True, player_path
         for event in pg.event.get():
@@ -203,6 +232,7 @@ def main(map, location, display):
         if vx != 0 or vz != 0:
             if Maze.on_pipe(x, z, y):
                 if not passed:
+                    print("dao")
                     x, y, z = go_to_next_pipe(x, y, z, Maze)
                     vy = 0
                     passed = True
@@ -236,17 +266,13 @@ def main(map, location, display):
         bz += vbz
         bx = round(bx, 2)
         bz = round(bz, 2)
-        # print(y, vy)
 
         if dtheta != 0:
+            # print(x, z)
             glTranslatef(-x, 0.0, -z)
-            # glPushMatrix()
             glRotatef(dtheta, 0, 1, 0)
-            # glPopMatrix()
             glTranslatef(x, 0.0, z)
-            # print(theta)
-        # calculate_pos(-bx, -bz)
-        # print(theta, vx, vz)
+
         if not Maze.on_pipe(x, z, y):
             if y > 0:
                 vy -= g
@@ -272,4 +298,19 @@ def main(map, location, display):
         Maze.solidCube(calculate_pos(x, z))
         Maze.draw_plane(50)
         Maze.draw_ceil()
+        # surfaceToTexture(auxiliary_map(
+        #     player=calculate_pos(z, x),
+        #     ghost=calculate_pos(bz, bx),
+        #     pipe1=calculate_pos(pipe_pos[0][1], pipe_pos[0][0]),
+        #     pipe2=calculate_pos(pipe_pos[1][1], pipe_pos[1][0]),
+        #     maze_width=len(Maze.map[0]),
+        #     maze_height=len(Maze.map)
+        # ))
+        # glBindTexture(GL_TEXTURE_2D, texID)
+        # glBegin(GL_QUADS)
+        # glTexCoord2f(0, 0); glVertex2f(-1, 1)
+        # glTexCoord2f(0, 1); glVertex2f(-1, -1)
+        # glTexCoord2f(1, 1); glVertex2f(1, -1)
+        # glTexCoord2f(1, 0); glVertex2f(1, 1)
+        # glEnd()
         pg.display.flip()

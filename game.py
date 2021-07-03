@@ -1,7 +1,7 @@
 
 import pygame, time
 import maze_3D
-from maze_2D import build_grid, generate_maze, shortest_path_bfs, maze_drawing2D, remove_horizontal, remove_vertical, highlight_coloring, define_locations
+from maze_2D import build_grid, generate_maze, shortest_path_bfs, maze_drawing2D, remove_horizontal, remove_vertical, highlight_coloring, define_locations, auxiliary_map
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 576
 
@@ -171,7 +171,7 @@ class Game(object):
                 # print(maze_matrix)
                 # print(draw_step)
 
-                maze_drawing2D(draw_step, algorithm)
+                maze_drawing2D(draw_step, algorithm, self.locations, 2*self.width+1, 2*self.height+1)
                 # pygame.image.save(screen, "./resources/maze2D.jpg")
                 self.maze2D = False
             else:
@@ -187,6 +187,7 @@ class Game(object):
                     self.game_time[0] = time.time()
                     screen.fill(CYAN)
                     self.display_message(screen,["3D map is coming!"])
+                    # auxiliary_map(玩家的座標, 鬼的座標, self.locations[1], self.locations[2], 2*self.width+1, 2*self.height+1)
                     # print(self.maze_matrix)
                     # Thomas 好帥:把Maze3D加到這
                     self.win, self.path = maze_3D.main(self.maze_matrix, self.locations, display=(SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -241,6 +242,15 @@ class Game(object):
             note = pygame.image.load("./resources/note_" + algorithm + ".png").convert_alpha()
             note = pygame.transform.scale(note, (250, 450))
             screen.blit(note, (760, 20))
+        
+        icons = ["./resources/start.png", "./resources/ghost.png", "./resources/pipe.png", "./resources/pipe.png", "./resources/trophy.png"]
+        locations_all = [(1, 1), self.locations[0], self.locations[1], self.locations[2], (2*width-1, 2*height-1)]
+        for index, url in enumerate(icons):
+            icon = pygame.image.load(url).convert_alpha()
+            icon = pygame.transform.scale(icon, (w, w))
+            col, row = locations_all[index]
+            x, y = bias_x+((col-1)//2)*w, bias_y+((row-1)//2)*w
+            screen.blit(icon, (x, y))
 
     def carve_player_movements(self, screen, w, movements, animation=True):
         bias_x = 24

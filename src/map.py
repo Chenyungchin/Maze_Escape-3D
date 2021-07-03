@@ -14,6 +14,10 @@ cubeQuads = ((0,3,6,4),(2,5,6,3),(1,2,5,7),(1,0,4,7),(7,4,6,5),(2,3,0,1))
 
 class maze:
     def __init__(self, map, location, cube = None, floor = None, ceil = None):
+        # map = np.array(map).T
+        # map = list(map)
+        # for i in range(len(map)):
+        #     map[i] = list(map[i])
         self.map = map
         self.cube = cube
         self.floor = floor
@@ -182,7 +186,7 @@ class maze:
             if self.map[round((x+dir[0])/2)][round((z+dir[1])/2)] == 1:
                 return True
             elif self.map[round((x+dir[0])/2)][round((z+dir[1])/2)] == 2 and y < 0.2:
-                print(y)
+                # print(y)
                 if (x-round(x/2)*2)**2 + (y-round(y/2)*2)**2 < 0.2:
                     return True
         if x < 0 or z < 0:
@@ -191,7 +195,7 @@ class maze:
         bias = 0.0
         if round((x+bias)/2) >= 0 and round((z+bias)/2) >= 0:
             if self.map[round((x+bias)/2)][round((z+bias)/2)] == 2 and y >= 1:
-                print("on pipe", (x, z))
+                print("on pipe", (x, y, z))
                 return True
 
     def get_next_pipe(self, x, z):
