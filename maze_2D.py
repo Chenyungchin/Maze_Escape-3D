@@ -318,7 +318,7 @@ def define_locations(maze_matrix, maze_width, maze_height):
     while True:
         ghostx = random.randint(1, maze_width-2)
         ghosty = random.randint(1, maze_height-2)
-        if abs(ghostx-ex) + abs(ghosty-ey) <= (maze_width+maze_height)/3 and maze_matrix[ghosty][ghostx] == 0:
+        if abs(ghostx-ex) + abs(ghosty-ey) <= (maze_width+maze_height)/4 and maze_matrix[ghosty][ghostx] == 0:
             break
     while True:
         pipex1 = random.randint(1, maze_width-2)
