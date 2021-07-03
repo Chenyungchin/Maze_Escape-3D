@@ -233,7 +233,7 @@ class Game(object):
         for j in range(2*height+1):
             for i in range(2*width+1):
                 if i != 0 and i != 2*width and j != 0 and j != 2*height:
-                    if (i+j)%2 == 1 and maze_matrix[j][i] == 0:
+                    if (i+j)%2 == 1 and maze_matrix[j][i]%2 == 0:
                         if j % 2 == 1:
                             remove_vertical(bias_x+(i//2)*w, bias_y+((j-1)//2)*w, w)
                         else:
