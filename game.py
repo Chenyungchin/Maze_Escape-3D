@@ -6,7 +6,8 @@ SCREEN_HEIGHT = 576
 
 # Define some colors
 BLACK = (0,0,0)
-WHITE = (255,255,255)
+#WHITE = (255,255,255)
+WHITE = (0,0,0)
 BLUE = (0,0,255)
 RED = (255,0,0)
 CYAN = (0, 255, 255)
@@ -91,22 +92,23 @@ class Game(object):
     def display_frame(self,screen):
         #screen.fill(seBLACK)
         image = pygame.image.load("./resources/bg.png")
+        #image = pygame.image.load("./resources/bg_.jpg")
         image.convert()
         image = pygame.transform.scale(image, (1024, 576))
         screen.blit(image, (0,0))
         # --- Drawing code should go here
         if self.game_over:
             if self.about:
-                image = pygame.image.load("./resources/bg.png")
+                image = pygame.image.load("./resources/bg_.jpg")
                 image.convert()
                 image = pygame.transform.scale(image, (1024, 576))
                 screen.blit(image, (0,0))
-                self.display_message(screen,["Select the maze-generating algorithm and map size in Setting.", "Press LEFT and RIGHT on your keyboard to adjust your vision", "and press UP to proceed,","Find the way to escape from the MAZE!","Enjoy the 3D world!"])
+                self.display_message(screen,["Please select the maze-generating algorithm and map size in Setting.", "Press LEFT and RIGHT on your keyboard to adjust your vision.", "Press UP to proceed and SPACE to jump.","There are two pipes working as a transport portal in the maze.","Also there's a ghost that will kill you immediately when it touches you.","Find the way to escape from the MAZE! Enjoy the 3D world!"])
                 label = self.font.render("Press ESC to return",True, WHITE)
                 screen.blit(label, (700, 520))
                 
             elif self.setting:
-                image = pygame.image.load("./resources/bg.png")
+                image = pygame.image.load("./resources/bg_.jpg")
                 image.convert()
                 image = pygame.transform.scale(image, (1024, 576))
                 screen.blit(image, (0,0))
@@ -345,7 +347,7 @@ class Game(object):
         screen.blit(label, pos)
 
 
-    def display_message(self,screen,message,color=(255,255,255)):
+    def display_message(self,screen,message,color=(0,0,0)):
         
         for index,line in enumerate(message):    
             label = self.font.render(line,True,color)
