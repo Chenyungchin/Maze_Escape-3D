@@ -71,7 +71,7 @@ def handel_key(event, vx, vy, vz, y, step, theta, dtheta, theta_step):
             dtheta -= theta_step
         elif event.key == pg.K_SPACE:
             if y==0:
-                print("jump")
+                # print("jump")
                 vy = 0.6
     if event.type == pg.KEYUP:
         if event.key == pg.K_UP:
@@ -93,8 +93,8 @@ def enemy_moving(path, x, z):
     z_next, x_next = path[0]
     z_next*=2
     x_next*=2
-    v = 0.1
-    print(path, x, z)
+    v = 0.05
+    # print(path, x, z)
     vbx = 0
     vbz = 0
     if x_next - x <= -0.019:
@@ -129,7 +129,7 @@ def go_to_next_pipe(x, y, z, Maze):
     return x_next, 1, z_next
 
 
-def main(map, display):
+def main(map, location, display):
     # pg.init()
 #     # display = (1680, 1050)
     pg.display.set_mode(display, DOUBLEBUF|OPENGL)
@@ -137,13 +137,13 @@ def main(map, display):
     wall_texture = texture.loadImage("tex/wall.jpeg")
     ceil_texture = texture.loadImage("tex/sky.jpg")
     floor_texture = texture.loadImage("tex/floor_01.png")
-    Maze = maze(map=map, cube=wall_texture, floor=floor_texture, ceil=ceil_texture)
+    Maze = maze(map=map, location=location, cube=wall_texture, floor=floor_texture, ceil=ceil_texture)
     init(display)
     # LOAD OBJECT AFTER PYGAME INIT
     obj = OBJ("obj/ghost.obj", swapyz=True)
     obj.generate(scale_rate = 5, rx=-90, rz=0)
-    trophy = OBJ("obj/trophy.obj", swapyz=True)
-    trophy.generate(scale_rate = 0.1, rx=-90, rz=90, mx=len(map)*2-2, mz=len(map[0])*2-4)
+    # trophy = OBJ("obj/trophy.obj", swapyz=True)
+    # trophy.generate(scale_rate = 0.1, rx=-90, rz=90, mx=len(map)*2-2, mz=len(map[0])*2-4)
     pipe_pos = Maze.get_pipe()
     pipe1 = OBJ("obj/MarioPipe.obj", swapyz=True)
     pipe1.generate(scale_rate=0.01, rx=-90, mx=pipe_pos[0][0], mz=pipe_pos[0][1], my=1)
@@ -157,13 +157,13 @@ def main(map, display):
     vy = 0
     vx = 0
     g = 0.05
-    bx = 10
-    bz = 10
+    bx = location[0][1]
+    bz = location[0][0]
     vbx = 0
     vbz = 0
     theta = 0
     dtheta = 0
-    theta_step = 10
+    theta_step = 5
     step = 0.5
     passed = False
     player_path = [(z//2, x//2)]
@@ -178,8 +178,8 @@ def main(map, display):
     
     # pacman = texture.loadImage("tex/pacman.bmp")
     while True:
-        if game_over(x, z, bx, bz):
-            return False, player_path
+        # if game_over(x, z, bx, bz):
+            # return False, player_path
         if win(x, z, len(map)*2-2, len(map[0])*2-4):
             return True, player_path
         for event in pg.event.get():
@@ -208,7 +208,7 @@ def main(map, display):
                     passed = True
             else:
                 passed = False
-            if Maze.collision_detect(x, y, z):
+            if Maze.collision_detect(x, y, z, angle=theta, coordinate=calculate_pos(x, z)):
                 # print("True")
                 x -= vx
                 z -= vz
@@ -240,7 +240,9 @@ def main(map, display):
 
         if dtheta != 0:
             glTranslatef(-x, 0.0, -z)
+            # glPushMatrix()
             glRotatef(dtheta, 0, 1, 0)
+            # glPopMatrix()
             glTranslatef(x, 0.0, z)
             # print(theta)
         # calculate_pos(-bx, -bz)
@@ -264,7 +266,7 @@ def main(map, display):
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
         obj.generate(scale_rate = 0.1, rx=-90, rz=0, mx=bx, mz=bz)
         obj.render()
-        trophy.render()
+        # trophy.render()
         pipe1.render()
         pipe2.render()
         Maze.solidCube(calculate_pos(x, z))

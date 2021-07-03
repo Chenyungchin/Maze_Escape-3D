@@ -1,7 +1,7 @@
 
 import pygame, time
-from maze_2D import build_grid, generate_maze, shortest_path_bfs, maze_drawing2D, remove_horizontal, remove_vertical, highlight_coloring
 import maze_3D
+from maze_2D import build_grid, generate_maze, shortest_path_bfs, maze_drawing2D, remove_horizontal, remove_vertical, highlight_coloring, define_locations
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 576
 
@@ -32,6 +32,8 @@ class Game(object):
         self.display_result = False
         self.game_time = [0, 0]
         self.win = True
+        self.path = []
+        self.locations = ((0, 0), (0, 0), (0, 0))
         # Create the font for displaying the score on the screen
         self.font = pygame.font.Font(None,35)
         self.font_small = pygame.font.Font(None, 20)
@@ -163,8 +165,10 @@ class Game(object):
                 self.height = height 
                 self.w = w
 
-
-                # print(self.maze_matrix)
+                self.locations = define_locations(self.maze_matrix, 2*self.width+1, 2*self.height+1)
+                
+                print(self.locations)
+                # print(maze_matrix)
                 # print(draw_step)
 
                 maze_drawing2D(draw_step, algorithm)
@@ -185,12 +189,12 @@ class Game(object):
                     self.display_message(screen,["3D map is coming!"])
                     # print(self.maze_matrix)
                     # Thomas 好帥:把Maze3D加到這
-                    self.win, self.path = maze_3D.main(self.maze_matrix, display=(SCREEN_WIDTH, SCREEN_HEIGHT))
+                    self.win, self.path = maze_3D.main(self.maze_matrix, self.locations, display=(SCREEN_WIDTH, SCREEN_HEIGHT))
                     self.show_result = True
                     screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
                     self.game_time[1] = time.time()
                 elif not self.display_result:
-                    if self.win == False:
+                    if self.win == True:
                         img = pygame.image.load("./resources/win.jpg").convert_alpha()
                     else:
                         img = pygame.image.load("./resources/lose.jpg").convert_alpha()
@@ -260,6 +264,7 @@ class Game(object):
         best_path = shortest_path_bfs(self.maze_matrix, (0, 1), (2*self.width-1, 2*self.height), 2*self.width+1, 2*self.height+1)
         print(best_path)
         last_col, last_row  = -1, 1
+        
         for i in range(max(len(movements), len(best_path))):
             if animation == True:
                 time.sleep(0.1)
@@ -296,7 +301,7 @@ class Game(object):
         pygame.display.update()
     
     def rewind(self, screen, time):
-        posx = 770
+        posx = 760
         font = pygame.font.Font(None,50)
         label = font.render("REWIND:", True, WHITE)
         screen.blit(label, (770, 25))
@@ -310,6 +315,11 @@ class Game(object):
         sec = round(sec)
         time = str(sec//60), str(sec%60)
         self.display_message_picked_position(screen, "Time : "+time[0]+" min "+time[1]+" sec", (posx, 150))
+        best_path_len = len(shortest_path_bfs(self.maze_matrix, (0, 1), (2*self.width-1, 2*self.height), 2*self.width+1, 2*self.height+1))
+        self.display_message_picked_position(screen, "Best Route : "+ str(best_path_len) +" steps", (posx, 200))
+        if self.win:
+            self.display_message_picked_position(screen, "Your Route : "+ str(len(self.path)) +" steps", (posx, 250))
+        self.display_message_picked_position(screen,"Press ESC to return", (760, 500))
 
 
 

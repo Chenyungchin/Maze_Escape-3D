@@ -4,7 +4,8 @@ from pygame.constants import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from objloader import *
-import random
+import math
+import numpy as np
 
 cubeVertices = [[1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1],[-1,1,1],[-1,-1,-1],[-1,-1,1],[-1,1,-1]]
 cubeTextures = [[0, 0], [0, 1], [1, 1], [1, 0]]
@@ -12,12 +13,12 @@ cubeEdges = ((0,1),(0,3),(0,4),(1,2),(1,7),(2,5),(2,3),(3,6),(4,6),(4,7),(5,6),(
 cubeQuads = ((0,3,6,4),(2,5,6,3),(1,2,5,7),(1,0,4,7),(7,4,6,5),(2,3,0,1))
 
 class maze:
-    def __init__(self, map, cube = None, floor = None, ceil = None):
+    def __init__(self, map, location, cube = None, floor = None, ceil = None):
         self.map = map
         self.cube = cube
         self.floor = floor
         self.ceil = ceil
-        self.add_pipe()
+        self.add_pipe(location)
         print(self.map)
         self.pipe = []
         for i in range(len(map)):
@@ -160,21 +161,37 @@ class maze:
         # glDeleteTextures([self.texture])
         
     
-    def collision_detect(self, x, y, z):
+    def collision_detect(self, x, y, z, angle = None, coordinate = None):
+        # b = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+        # dis = []
+        # for i in b:
+        #     if self.map[coordinate[0]+i[0]][coordinate[1]+i[1]] == 1:
+        #         dis.append([coordinate[0]+i[0], coordinate[1]+i[1]])
+        # print(dis, coordinate, (x, z))
+        # dis = np.array(dis, dtype=np.float64)
+        # dis *= 2
+        # dis -= np.array([x, z], dtype=np.float64)
+        # dis = np.sum(dis*dis, axis=1)
+        # print(dis)
+        # if True in (dis<=2.25):    
+        #     return True
         bias = 0.0
+        dir = (-bias*math.sin(angle), bias*math.cos(angle))
         # print(x, z, round((x+bias)/2), round((z+bias)/2))
-        if round((x+bias)/2) >= 0 and round((z+bias)/2) >= 0:
-            if self.map[round((x+bias)/2)][round((z+bias)/2)] == 1:
+        if round((x+dir[0])/2) >= 0 and round((z+dir[1])/2) >= 0:
+            if self.map[round((x+dir[0])/2)][round((z+dir[1])/2)] == 1:
                 return True
-            elif self.map[round((x+bias)/2)][round((z+bias)/2)] == 2 and y < 0.2:
+            elif self.map[round((x+dir[0])/2)][round((z+dir[1])/2)] == 2 and y < 0.2:
                 print(y)
                 if (x-round(x/2)*2)**2 + (y-round(y/2)*2)**2 < 0.2:
                     return True
+        if x < 0 or z < 0:
+            return True
     def on_pipe(self, x, z, y):
         bias = 0.0
         if round((x+bias)/2) >= 0 and round((z+bias)/2) >= 0:
             if self.map[round((x+bias)/2)][round((z+bias)/2)] == 2 and y >= 1:
-                print("on pipe")
+                print("on pipe", (x, z))
                 return True
 
     def get_next_pipe(self, x, z):
@@ -188,10 +205,12 @@ class maze:
     def get_pipe(self):
         return self.pipe
 
-    def add_pipe(self):
-        dao = 2
-        while dao > 0:
-            point = (random.randint(0, len(self.map)-1), random.randint(0, len(self.map[0])-1))
-            if self.map[point[0]][point[1]] == 0:
-                self.map[point[0]][point[1]] = 2   
-                dao -= 1
+    def add_pipe(self, location):
+        # dao = 2
+        # while dao > 0:
+        #     point = (random.randint(0, len(self.map)-1), random.randint(0, len(self.map[0])-1))
+        #     if self.map[point[0]][point[1]] == 0:
+        #         self.map[point[0]][point[1]] = 2   
+        #         dao -= 1
+        for i in location:
+            self.map[i[1]][i[0]] = 2
