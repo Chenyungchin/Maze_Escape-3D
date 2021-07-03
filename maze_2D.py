@@ -90,7 +90,7 @@ def generate_maze(algorithm, width, height, w):
     if algorithm == "randomized_prims":
         return randomized_prims(width, height, w, maze_matrix)
 
-def maze_drawing2D(draw_step, algorithm):
+def maze_drawing2D(draw_step, algorithm, locations, maze_width, maze_height):
     while len(draw_step) > 0:
         if algorithm == "dfs_backtrack":
             delay = 0.05
@@ -113,6 +113,21 @@ def maze_drawing2D(draw_step, algorithm):
             go_up(x, y, w)
         elif direction == "recolor":
             cell_recoloring(x, y, w)
+
+    bias_x = 24
+    bias_y = 18
+    icons = ["./resources/start.png", "./resources/ghost.png", "./resources/pipe.jpg", "./resources/pipe.jpg", "./resources/trophy.jpg"]
+    locations_all = [(0, 1), locations[0], locations[1], locations[2], (maze_width-2, maze_height-1)]
+    for index, url in enumerate(icons):
+        icon = pygame.image.load(url).convert_alpha()
+        icon = pygame.transform.scale(icon, (w, w))
+        col, row = locations_all[index]
+        x, y = bias_x+((col-1)//2)*w, bias_y+((row-1)//2)*w
+        screen.blit(icon, (x, y))
+        time.sleep(delay)
+
+ 
+
         
 
 def dfs_backtrack(w, maze_matrix):
