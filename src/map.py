@@ -192,7 +192,7 @@ class maze:
                 for vertice in cubeVertices:
                     vertice[0]+=i*2
                     vertice[2]+=k*2
-        for k in range(len(self.map[0])):
+        for k in range(max(pos[1]-10, 0),  min(len(self.map[0]), pos[1]+10)):
             for i in range(max(pos[0]-1, 0), min(pos[0]+2, len(self.map))):
                 for vertice in cubeVertices:
                         vertice[0]-=i*2
@@ -209,7 +209,7 @@ class maze:
                     vertice[0]+=i*2
                     vertice[2]+=k*2
         
-        for i in range(len(self.map)):
+        for i in range(max(pos[0]-10, 0), min(len(self.map), pos[0]+10)):
             for k in range(max(0, pos[1]-1), min(pos[1]+2, len(self.map[0]))):
                 for vertice in cubeVertices:
                         vertice[0]-=i*2
