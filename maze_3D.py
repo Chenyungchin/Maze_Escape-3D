@@ -59,7 +59,6 @@ def handel_key(event, vx, vy, vz, y, step, theta, dtheta, theta_step):
         pg.quit()
         quit()
     if event.type == pg.KEYDOWN:
-        print(event.key)
         if event.key == pg.K_UP:
             vz+=step*math.cos(math.pi/180*theta)
             vx-=step*math.sin(math.pi/180*theta)
@@ -120,7 +119,7 @@ def go_to_next_pipe(x, y, z, Maze):
         maze_height=len(Maze.map),
     )
     path.pop(0)
-    # glTranslatef(path[0][1]*2-x, y, path[0][0]*2-z)
+    glTranslatef(path[0][1]*2-x, y, path[0][0]*2-z)
     # glPushMatrix()
     # glTranslatef(x, 0.5, z)
     # for i in range(2):
@@ -129,7 +128,7 @@ def go_to_next_pipe(x, y, z, Maze):
     #     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
     # glPopMatrix()
     # glPushMatrix()
-    glTranslatef(x_next-x, y-1, z_next-z)
+    # glTranslatef(x_next-x, y-1, z_next-z)
     # pg.time.wait(300)
     # glTranslatef(x_next, -0.5, z_next)
     # for i in range(2):
@@ -138,8 +137,8 @@ def go_to_next_pipe(x, y, z, Maze):
     #     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
     # glPopMatrix()
     
-    # return path[0][1]*2, 0, path[0][0]*2
-    return x_next, 1, z_next
+    return path[0][1]*2, 0, path[0][0]*2
+    # return x_next, 1, z_next
 
 
 def main(map, location, display):
@@ -157,7 +156,7 @@ def main(map, location, display):
     trophy_texture = texture.loadImage("resources/trophy.png", type="png", angle=-90)
     player_texture = texture.loadImage("resources/footprint.png", type="png", angle=-90)
     # initialize maze
-    Maze = maze(map=map, location=location, cube=wall_texture, floor=floor_texture, ceil=ceil_texture)
+    Maze = maze(map=map, location=location, cube=wall_texture, floor=floor_texture, ceil=ceil_texture, pipe=pipe_texture, ghost=ghost_texture, trophy=trophy_texture, player=player_texture)
     # basic opengl configuration
     init(display)
     # load object after pygame init
@@ -224,7 +223,6 @@ def main(map, location, display):
         if vx != 0 or vz != 0:
             if Maze.on_pipe(x, z, y):
                 if not passed:
-                    print("dao")
                     x, y, z = go_to_next_pipe(x, y, z, Maze)
                     vy = 0
                     passed = True
@@ -298,7 +296,13 @@ def main(map, location, display):
         glPushMatrix()
         glLoadIdentity()
         glDisable(GL_DEPTH_TEST)
-        Maze.draw_square(pipe=pipe_texture, ghost=ghost_texture, trophy=trophy_texture, player=player_texture, player_pos=(x, y))
+        Maze.draw_square(
+            pipe1_pos=(location[0][1], location[0][0]), 
+            pipe2_pos=(location[1][1], location[1][0]), 
+            ghost_pos=calculate_pos(bx, bz), 
+            trophy_pos=(len(map)-1, len(map[0])-2),
+            player_pos=calculate_pos(x, z)
+        )
         glEnable(GL_DEPTH_TEST)
         glMatrixMode(GL_PROJECTION)
         glPopMatrix()

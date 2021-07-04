@@ -14,7 +14,7 @@ cubeEdges = ((0,1),(0,3),(0,4),(1,2),(1,7),(2,5),(2,3),(3,6),(4,6),(4,7),(5,6),(
 cubeQuads = ((0,3,6,4),(2,5,6,3),(1,2,5,7),(1,0,4,7),(7,4,6,5),(2,3,0,1))
 
 class maze:
-    def __init__(self, map, location, cube = None, floor = None, ceil = None):
+    def __init__(self, map, location, cube = None, floor = None, ceil = None, pipe=None, ghost=None, trophy=None, player=None ):
         # map = np.array(map).T
         # map = list(map)
         # for i in range(len(map)):
@@ -23,7 +23,11 @@ class maze:
         self.cube = cube
         self.floor = floor
         self.ceil = ceil
-        self.add_pipe(location)
+        self.pipe_texture = pipe
+        self.ghost = ghost
+        self.trophy = trophy
+        self.player = player
+        self.add_pipe(location[1:])
         print(self.map)
         self.pipe = []
         for i in range(len(map)):
@@ -98,19 +102,21 @@ class maze:
         glEnd()
         glDisable(GL_TEXTURE_2D)
 
-    def draw_square(self, pipe, ghost, trophy, player, player_pos):
+    def draw_square(self, pipe1_pos, pipe2_pos, ghost_pos, trophy_pos, player_pos):
         # glDisable(GL_TEXTURE_2D)
+        mapH = 200
+        mapW = 200
         glBegin(GL_QUADS)
         glColor3f(2.0, 2.0, 2.0)
-        glVertex3f(200, 0,0)
-        glVertex3f(200,200,0)
-        glVertex3f(0,200,0)
-        glVertex3f(0,0,0)
+        glVertex3f(mapW, 0, 0)
+        glVertex3f(mapW, mapH, 0)
+        glVertex3f(0, mapH, 0)
+        glVertex3f(0, 0, 0)
         glEnd()
-        self.draw_pic(pipe, x=50, y=50, size=50)
-        self.draw_pic(ghost, x=80, y=80, size=20)
-        self.draw_pic(trophy, x=20, y=30, size=20)
-        self.draw_pic(player, x=100, y=100, size=30)
+        self.draw_pic(self.pipe_texture, x=50, y=50, size=50)
+        self.draw_pic(self.ghost, x=80, y=80, size=20)
+        self.draw_pic(self.trophy, x=20, y=30, size=20)
+        self.draw_pic(self.player, x=100, y=100, size=30)
 
 
     def wireCube(self, pos):
@@ -252,4 +258,5 @@ class maze:
         #         self.map[point[0]][point[1]] = 2   
         #         dao -= 1
         for i in location:
+            print(i)
             self.map[i[1]][i[0]] = 2
