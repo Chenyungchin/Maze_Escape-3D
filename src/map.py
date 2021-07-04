@@ -175,7 +175,7 @@ class maze:
             glBindTexture(GL_TEXTURE_2D, self.cube)
         glBegin(GL_QUADS)
         # glColor3f(0.8, 0.8, 0.8)
-        bias = 7
+        bias = 5
         for i in range(max(pos[0]-bias, 0), min(len(self.map), pos[0]+bias)):
             for k in range(max(pos[1]-bias, 0), min(len(self.map[0]), pos[1]+bias)):
                 for vertice in cubeVertices:
@@ -250,10 +250,10 @@ class maze:
         if round((x+dir[0])/2) >= 0 and round((z+dir[1])/2) >= 0:
             if self.map[round((x+dir[0])/2)][round((z+dir[1])/2)] == 1:
                 return True
-            elif self.map[round((x+dir[0])/2)][round((z+dir[1])/2)] == 2 and y < 0.2:
-                # print(y)
-                if (x-round(x/2)*2)**2 + (y-round(y/2)*2)**2 < 0.2:
-                    return True
+            # elif self.map[round((x+dir[0])/2)][round((z+dir[1])/2)] == 2 and y < 0.2:
+            #     # print(y)
+            #     if (x-round(x/2)*2)**2 + (y-round(y/2)*2)**2 < 0.2:
+            #         return True
         if x < 0 or z < 0:
             return True
     def on_pipe(self, x, z, y):

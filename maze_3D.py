@@ -298,8 +298,8 @@ def main(map, location, display):
         glLoadIdentity()
         glDisable(GL_DEPTH_TEST)
         Maze.draw_square(
-            pipe1_pos=(location[0][1], location[0][0]), 
-            pipe2_pos=(location[1][1], location[1][0]), 
+            pipe1_pos=(location[1][1], location[1][0]), 
+            pipe2_pos=(location[2][1], location[2][0]), 
             ghost_pos=calculate_pos(bx, bz), 
             trophy_pos=(len(map)-1, len(map[0])-2),
             player_pos=calculate_pos(x, z)
