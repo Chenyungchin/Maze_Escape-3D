@@ -151,12 +151,13 @@ def main(map, location, display):
     wall_texture = texture.loadImage("tex/wall.jpeg")
     ceil_texture = texture.loadImage("tex/sky.jpg")
     floor_texture = texture.loadImage("tex/floor_01.png")
-    pipe_texture = texture.loadImage("resources/pipe.png", type="png", angle=-90)
+    pipe_texture = texture.loadImage("resources/pipe_big.png", type="png", angle=-90)
     ghost_texture = texture.loadImage("resources/ghost.png", type="png", angle=-90)
     trophy_texture = texture.loadImage("resources/trophy.png", type="png", angle=-90)
     player_texture = texture.loadImage("resources/footprint.png", type="png", angle=-90)
+    start_texture = texture.loadImage("resources/start.png", type="png", angle=90)
     # initialize maze
-    Maze = maze(map=map, location=location, cube=wall_texture, floor=floor_texture, ceil=ceil_texture, pipe=pipe_texture, ghost=ghost_texture, trophy=trophy_texture, player=player_texture)
+    Maze = maze(map=map, location=location, cube=wall_texture, floor=floor_texture, ceil=ceil_texture, pipe=pipe_texture, ghost=ghost_texture, trophy=trophy_texture, player=player_texture, start=start_texture)
     # basic opengl configuration
     init(display)
     # load object after pygame init
