@@ -111,10 +111,10 @@ class maze:
         bias_h = 576-mapH
         glBegin(GL_QUADS)
         glColor3f(2.0, 2.0, 2.0)
-        glVertex3f(mapW+bias_w, bias_h-10, 0)
+        glVertex3f(mapW+bias_w, bias_h-12, 0)
         glVertex3f(mapW+bias_w, mapH+bias_h, 0)
-        glVertex3f(bias_w-10, mapH+bias_h, 0)
-        glVertex3f(bias_w-10, bias_h-10, 0)
+        glVertex3f(bias_w-20, mapH+bias_h, 0)
+        glVertex3f(bias_w-20, bias_h-12, 0)
         glEnd()
 
         # positions = [(0, 1), trophy_pos, player_pos, ghost_pos, pipe1_pos, pipe2_pos]
@@ -133,7 +133,7 @@ class maze:
         for index, icon in enumerate(icons):
             if icon:
                 row, col = positions[index]
-                dx, dy = wx*col+wx, wy*row 
+                dx, dy = wx*col+wx-10, wy*row 
                 #print(index, 576-dy, row)
                 self.draw_pic(icon, x=bias_w+dx, y=576-dy, size=sizes[index])
 
