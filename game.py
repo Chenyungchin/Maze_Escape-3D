@@ -1,5 +1,6 @@
 
 import pygame, time
+import maze_3D
 from maze_2D import build_grid, generate_maze, shortest_path_bfs, maze_drawing2D, remove_horizontal, remove_vertical, highlight_coloring, define_locations, auxiliary_map
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 576
@@ -154,18 +155,17 @@ class Game(object):
                 note = pygame.transform.scale(note, (250, 450))
                 screen.blit(note, (760, 20))
 
-                maze_matrix, draw_step = generate_maze(algorithm, width, height, w)
+                self.maze_matrix, draw_step = generate_maze(algorithm, width, height, w)
 
                 for i in range(2*height-1):
-                    maze_matrix[i].insert(0, 1)
-                    maze_matrix[i].append(1)
-                maze_matrix.insert(0, [1]*(2*width+1))
-                maze_matrix.append([1]*(2*width+1))
+                    self.maze_matrix[i].insert(0, 1)
+                    self.maze_matrix[i].append(1)
+                self.maze_matrix.insert(0, [1]*(2*width+1))
+                self.maze_matrix.append([1]*(2*width+1))
                 #define starting point
-                maze_matrix[1][0] = 0
-                maze_matrix[-1][-2] = 0
+                self.maze_matrix[1][0] = 0
+                self.maze_matrix[-1][-2] = 0
 
-                self.maze_matrix = maze_matrix
                 self.width = width 
                 self.height = height 
                 self.w = w
@@ -195,7 +195,9 @@ class Game(object):
                     # auxiliary_map(玩家的座標, 鬼的座標, self.locations[1], self.locations[2], 2*self.width+1, 2*self.height+1)
                     # print(self.maze_matrix)
                     # Thomas 好帥:把Maze3D加到這
+                    self.win, self.path = maze_3D.main(self.maze_matrix, self.locations, display=(SCREEN_WIDTH, SCREEN_HEIGHT))
                     self.show_result = True
+                    screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
                     self.game_time[1] = time.time()
                 elif not self.display_result:
                     if self.win == True:
@@ -213,9 +215,9 @@ class Game(object):
                     self.display_result = True
                 else:
                     self.maze_reconstruction(screen, self.maze_matrix, self.width, self.height, self.w, display_note=False)
-                    path = shortest_path_bfs(self.maze_matrix, (0, 1), (2*self.width-1, 2*self.height), 2*self.width+1, 2*self.height+1)
+                    # path = shortest_path_bfs(self.maze_matrix, (0, 1), (2*self.width-1, 2*self.height), 2*self.width+1, 2*self.height+1)
                     self.rewind(screen, self.game_time[1]-self.game_time[0])
-                    self.carve_player_movements(screen, self.w, path, animation=False)
+                    self.carve_player_movements(screen, self.w, self.path, animation=False)
 
 
 
