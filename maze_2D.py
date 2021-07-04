@@ -96,7 +96,7 @@ def maze_drawing2D(draw_step, algorithm, locations, maze_width, maze_height):
             delay = 0.05
         else:
             delay = 0.1
-        test = True
+        test = False
         if test:
             delay = 0.0001
         time.sleep(delay)
