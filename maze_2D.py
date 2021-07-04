@@ -276,7 +276,9 @@ def randomized_prims(width, height, w, maze_matrix):
 
     return maze_matrix, draw_step
         
-def shortest_path_bfs(maze_matrix, start, end, maze_width, maze_height):
+def shortest_path_bfs(maze_matrix, start, end, maze_width, maze_height, Print=False):
+    if Print:
+        print(maze_matrix, start, end, maze_width, maze_height)
     Q = queue.Queue()
     Q.put(start)
     # print(Q.qsize())
@@ -285,19 +287,19 @@ def shortest_path_bfs(maze_matrix, start, end, maze_width, maze_height):
     while end not in visit:
         x, y = Q.get()
         # print(x, y, Q.qsize())
-        if x+1 <= maze_width-1 and maze_matrix[y][x+1] == 0 and (x+1, y) not in visit:
+        if x+1 <= maze_width-1 and maze_matrix[y][x+1] != 1 and (x+1, y) not in visit:
             Q.put((x+1, y))
             visit.append((x+1, y))
             ancestor[y][x+1] = (x, y)
-        if x-1 >= 0 and maze_matrix[y][x-1] == 0 and (x-1, y) not in visit:
+        if x-1 >= 0 and maze_matrix[y][x-1] != 1 and (x-1, y) not in visit:
             Q.put((x-1, y))
             visit.append((x-1, y))
             ancestor[y][x-1] = (x, y)
-        if y+1 <= maze_height-1 and maze_matrix[y+1][x] == 0 and (x, y+1) not in visit:
+        if y+1 <= maze_height-1 and maze_matrix[y+1][x] != 1 and (x, y+1) not in visit:
             Q.put((x, y+1))
             visit.append((x, y+1))
             ancestor[y+1][x] = (x, y)
-        if y-1 >= 0 and maze_matrix[y-1][x] == 0 and (x, y-1) not in visit:
+        if y-1 >= 0 and maze_matrix[y-1][x] != 1 and (x, y-1) not in visit:
             Q.put((x, y-1))
             visit.append((x, y-1))
             ancestor[y-1][x] = (x, y)
@@ -334,6 +336,7 @@ def define_locations(maze_matrix, maze_width, maze_height):
     return (ghostx, ghosty), (pipex1, pipey1), (pipex2, pipey2)
 
 def auxiliary_map(player, ghost, pipe1, pipe2, maze_width, maze_height):
+    screen = pygame.Surface((300, 300))
     # start, end, player, ghost, pipe1, pipe2
     map_width = 160
     map_height = 120
@@ -353,6 +356,7 @@ def auxiliary_map(player, ghost, pipe1, pipe2, maze_width, maze_height):
         x, y = bias_x+col*wx, bias_y+row*wy
         screen.blit(icon, (x, y-wy))
 
+    return screen
 
 
 
