@@ -6,6 +6,7 @@ from OpenGL.GLU import *
 from objloader import *
 import math
 import numpy as np
+from PIL import Image
 
 cubeVertices = [[1,1,1],[1,1,-1],[1,-1,-1],[1,-1,1],[-1,1,1],[-1,-1,-1],[-1,-1,1],[-1,1,-1]]
 cubeTextures = [[0, 0], [0, 1], [1, 1], [1, 0]]
@@ -45,7 +46,6 @@ class maze:
 
             glBindTexture(GL_TEXTURE_2D, self.floor)
         glBegin(GL_QUADS)
-        glColor3f(1.0, 1.0, 1.0)
         glTexCoord2f(0.0, 0.0); glVertex3f( 1.0, -1.0,-1.0);
         glTexCoord2f(texture_tile, 0.0); glVertex3f(-1.0, -1.0,-1.0);
         glTexCoord2f(texture_tile, texture_tile); glVertex3f(-1.0, -1.0, 1.0);
@@ -69,7 +69,6 @@ class maze:
 
             glBindTexture(GL_TEXTURE_2D, self.ceil)
         glBegin(GL_QUADS)
-        glColor3f(0.53, 0.81, 0.92)
         glTexCoord2f(0.0, 0.0); glVertex3f( -len(self.map)*4, 4.0,len(self.map));
         glTexCoord2f(texture_tile, 0.0); glVertex3f(len(self.map), 4.0,len(self.map));
         glTexCoord2f(texture_tile, texture_tile); glVertex3f(len(self.map), 4.0, -len(self.map)*4);
@@ -77,6 +76,42 @@ class maze:
         glEnd()
         glDisable(GL_TEXTURE_2D)
         glPopMatrix()
+
+    def draw_pic(self, texture, x, y, size=20):
+        if self.ceil is not None:
+            glEnable(GL_TEXTURE_2D)
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+            # Repeat the texture.
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+            glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+
+            glBindTexture(GL_TEXTURE_2D, texture)
+        glBegin(GL_QUADS)
+        # glColor3f(1.0, 1.0, 1.0)
+        glTexCoord2f(0.0, 0.0); glVertex3f(x+size/2, y-size/2, 0)
+        glTexCoord2f(1.0, 0.0); glVertex3f(x+size/2, y+size/2, 0)
+        glTexCoord2f(1.0, 1.0); glVertex3f(x-size/2, y+size/2, 0)
+        glTexCoord2f(0.0, 1.0); glVertex3f(x-size/2, y-size/2, 0)
+        glEnd()
+        glDisable(GL_TEXTURE_2D)
+
+    def draw_square(self, pipe, ghost, trophy, player, player_pos):
+        # glDisable(GL_TEXTURE_2D)
+        glBegin(GL_QUADS)
+        glColor3f(2.0, 2.0, 2.0)
+        glVertex3f(200, 0,0)
+        glVertex3f(200,200,0)
+        glVertex3f(0,200,0)
+        glVertex3f(0,0,0)
+        glEnd()
+        self.draw_pic(pipe, x=50, y=50, size=50)
+        self.draw_pic(ghost, x=80, y=80, size=20)
+        self.draw_pic(trophy, x=20, y=30, size=20)
+        self.draw_pic(player, x=100, y=100, size=30)
+
 
     def wireCube(self, pos):
         glBegin(GL_LINES)
@@ -110,7 +145,7 @@ class maze:
             glBindTexture(GL_TEXTURE_2D, self.cube)
         glBegin(GL_QUADS)
         # glColor3f(0.8, 0.8, 0.8)
-        bias = 10
+        bias = 7
         for i in range(max(pos[0]-bias, 0), min(len(self.map), pos[0]+bias)):
             for k in range(max(pos[1]-bias, 0), min(len(self.map[0]), pos[1]+bias)):
                 for vertice in cubeVertices:
@@ -128,38 +163,38 @@ class maze:
                     vertice[0]+=i*2
                     vertice[2]+=k*2
         for k in range(len(self.map[0])):
-            i = pos[0]
-            for vertice in cubeVertices:
-                    vertice[0]-=i*2
-                    vertice[2]-=k*2
-            if self.map[i][k] == 1:
-                for cubeQuad in cubeQuads:
-                    texCount = 0
-                    for cubeVertex in cubeQuad:
-                        glTexCoord2dv(cubeTextures[texCount])
-                        glVertex3fv(cubeVertices[cubeVertex])
-                        texCount += 1
-                
-            for vertice in cubeVertices:
-                vertice[0]+=i*2
-                vertice[2]+=k*2
+            for i in range(max(pos[0]-1, 0), min(pos[0]+2, len(self.map))):
+                for vertice in cubeVertices:
+                        vertice[0]-=i*2
+                        vertice[2]-=k*2
+                if self.map[i][k] == 1:
+                    for cubeQuad in cubeQuads:
+                        texCount = 0
+                        for cubeVertex in cubeQuad:
+                            glTexCoord2dv(cubeTextures[texCount])
+                            glVertex3fv(cubeVertices[cubeVertex])
+                            texCount += 1
+                    
+                for vertice in cubeVertices:
+                    vertice[0]+=i*2
+                    vertice[2]+=k*2
         
         for i in range(len(self.map)):
-            k = pos[1]
-            for vertice in cubeVertices:
-                    vertice[0]-=i*2
-                    vertice[2]-=k*2
-            if self.map[i][k] == 1:
-                for cubeQuad in cubeQuads:
-                    texCount = 0
-                    for cubeVertex in cubeQuad:
-                        glTexCoord2dv(cubeTextures[texCount])
-                        glVertex3fv(cubeVertices[cubeVertex])
-                        texCount += 1
-                
-            for vertice in cubeVertices:
-                vertice[0]+=i*2
-                vertice[2]+=k*2
+            for k in range(max(0, pos[1]-1), min(pos[1]+2, len(self.map[0]))):
+                for vertice in cubeVertices:
+                        vertice[0]-=i*2
+                        vertice[2]-=k*2
+                if self.map[i][k] == 1:
+                    for cubeQuad in cubeQuads:
+                        texCount = 0
+                        for cubeVertex in cubeQuad:
+                            glTexCoord2dv(cubeTextures[texCount])
+                            glVertex3fv(cubeVertices[cubeVertex])
+                            texCount += 1
+                    
+                for vertice in cubeVertices:
+                    vertice[0]+=i*2
+                    vertice[2]+=k*2
         glEnd()
         glDisable(GL_TEXTURE_2D)
         # glDeleteTextures([self.texture])

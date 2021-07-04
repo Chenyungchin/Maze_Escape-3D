@@ -7,7 +7,7 @@ from objloader import *
 from src.texture import Texture
 import math
 from src.map import maze
-from maze_2D import shortest_path_bfs, auxiliary_map
+from maze_2D import shortest_path_bfs
 
 # texID = glGenTextures(1)
 
@@ -59,6 +59,7 @@ def handel_key(event, vx, vy, vz, y, step, theta, dtheta, theta_step):
         pg.quit()
         quit()
     if event.type == pg.KEYDOWN:
+        print(event.key)
         if event.key == pg.K_UP:
             vz+=step*math.cos(math.pi/180*theta)
             vx-=step*math.sin(math.pi/180*theta)
@@ -140,19 +141,6 @@ def go_to_next_pipe(x, y, z, Maze):
     # return path[0][1]*2, 0, path[0][0]*2
     return x_next, 1, z_next
 
-# def surfaceToTexture( pygame_surface ):
-#     global texID
-#     rgb_surface = pygame.image.tostring( pygame_surface, 'RGB')
-#     glBindTexture(GL_TEXTURE_2D, texID)
-#     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-#     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-#     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-#     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-#     surface_rect = pygame_surface.get_rect()
-#     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, surface_rect.width, surface_rect.height, 0, GL_RGB, GL_UNSIGNED_BYTE, rgb_surface)
-#     glGenerateMipmap(GL_TEXTURE_2D)
-#     glBindTexture(GL_TEXTURE_2D, 0)
-
 
 def main(map, location, display):
     # global texID
@@ -164,6 +152,10 @@ def main(map, location, display):
     wall_texture = texture.loadImage("tex/wall.jpeg")
     ceil_texture = texture.loadImage("tex/sky.jpg")
     floor_texture = texture.loadImage("tex/floor_01.png")
+    pipe_texture = texture.loadImage("resources/pipe.png", type="png", angle=-90)
+    ghost_texture = texture.loadImage("resources/ghost.png", type="png", angle=-90)
+    trophy_texture = texture.loadImage("resources/trophy.png", type="png", angle=-90)
+    player_texture = texture.loadImage("resources/footprint.png", type="png", angle=-90)
     # initialize maze
     Maze = maze(map=map, location=location, cube=wall_texture, floor=floor_texture, ceil=ceil_texture)
     # basic opengl configuration
@@ -298,19 +290,19 @@ def main(map, location, display):
         Maze.solidCube(calculate_pos(x, z))
         Maze.draw_plane(50)
         Maze.draw_ceil()
-        # surfaceToTexture(auxiliary_map(
-        #     player=calculate_pos(z, x),
-        #     ghost=calculate_pos(bz, bx),
-        #     pipe1=calculate_pos(pipe_pos[0][1], pipe_pos[0][0]),
-        #     pipe2=calculate_pos(pipe_pos[1][1], pipe_pos[1][0]),
-        #     maze_width=len(Maze.map[0]),
-        #     maze_height=len(Maze.map)
-        # ))
-        # glBindTexture(GL_TEXTURE_2D, texID)
-        # glBegin(GL_QUADS)
-        # glTexCoord2f(0, 0); glVertex2f(-1, 1)
-        # glTexCoord2f(0, 1); glVertex2f(-1, -1)
-        # glTexCoord2f(1, 1); glVertex2f(1, -1)
-        # glTexCoord2f(1, 0); glVertex2f(1, 1)
-        # glEnd()
+        glMatrixMode(GL_PROJECTION)
+        glPushMatrix()
+        glLoadIdentity()
+        glOrtho(0.0, display[0], 0.0, display[1], -1.0, 1.0)
+        glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        glLoadIdentity()
+        glDisable(GL_DEPTH_TEST)
+        Maze.draw_square(pipe=pipe_texture, ghost=ghost_texture, trophy=trophy_texture, player=player_texture, player_pos=(x, y))
+        glEnable(GL_DEPTH_TEST)
+        glMatrixMode(GL_PROJECTION)
+        glPopMatrix()
+        glMatrixMode(GL_MODELVIEW)
+        glPopMatrix()
+        glCullFace(GL_BACK)
         pg.display.flip()
