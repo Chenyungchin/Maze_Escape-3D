@@ -4,7 +4,12 @@ NTUEE Data Structures Final Project
 ## Required Software and Modules
 * Software : Python3
 * Module：Pygame and OpenGL
-(execute "pip install pygame" and "pip install PYOpenGL" to download the modules)
+
+execute command below
+```
+pip install PyOpenGL PyOpenGL_accelerate
+pip install pygame
+```
 
 
 ## How to Execute
