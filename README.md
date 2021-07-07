@@ -69,3 +69,9 @@ Enjoy the 3D world!
 * 詹侑昕 B08901046
 * 陳永縉 B08901061
 * 李允恩 B08901102
+
+## Reference 
+* https://www.youtube.com/watch?v=sVcB8vUFlmU&ab_channel=ReadySetPython
+* https://github.com/jcbahr/3D-maze
+* https://github.com/yarolig/OBJFileLoader
+* https://github.com/kongarakeerthi/PacMan-Python
