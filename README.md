@@ -3,12 +3,13 @@ NTUEE Data Structures Final Project
 
 ## Required Software and Modules
 * Software : Python3
-* Module：Pygame and OpenGL
+* Module：Pygame, OpenGL, and Pillow
 
 execute command below
 ```
 pip install PyOpenGL PyOpenGL_accelerate
 pip install pygame
+pip install Pillow
 ```
 
 
@@ -19,7 +20,11 @@ pip install pygame
 ## How to Play
 Select the maze-generating algorithm and map size in Setting.
 
-Press LEFT and RIGHT on your keyboard to adjust your vision and press UP to proceed.
+Press LEFT and RIGHT on your keyboard to adjust your vision and press UP and DOWN to proceed forward and backward.
+
+Press SPACE to jump.
+
+When jumping onto one pipe, player can teleport to the location of the other pipe.
 
 Find the way to escape from the MAZE!
 
